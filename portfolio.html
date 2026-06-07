@@ -51,6 +51,10 @@
   .bar-track { flex: 1; height: 18px; background: var(--border); border-radius: 4px; overflow: hidden; position: relative; }
   .bar-fill { height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 6px; font-size: 9px; font-weight: 700; color: #fff; white-space: nowrap; }
   .bar-val { font-size: 10px; color: var(--muted); min-width: 28px; }
+  .bar-group-header { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
+    margin: 14px 0 4px; padding-bottom: 3px; display: flex; align-items: center; gap: 7px; }
+  .bar-group-header:first-child { margin-top: 2px; }
+  .bar-group-swatch { display: inline-block; width: 12px; height: 12px; border-radius: 3px; }
   table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
   th { background: #0f1c2e; color: var(--accent); padding: 10px 12px; text-align: left;
         font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em;
@@ -305,20 +309,28 @@ function renderMeanScores() {
     const col = D.heatmap_scores.map(row => row[i]);
     return col.reduce((a,b)=>a+b,0)/col.length;
   });
-  const maxMean = Math.max(...means, 1);
+  const groups = [
+    {name:'Practices',  color:'#1d4ed8', start:0,  end:4},
+    {name:'Activities', color:'#0891b2', start:4,  end:8},
+    {name:'Objectives', color:'#7c3aed', start:8,  end:allDims.length},
+  ];
   let html = '';
-  allDims.forEach((dim, i) => {
-    const m = means[i];
-    const pct = (m / 100 * 100).toFixed(0);
-    const color = ALL_COLORS[i] || '#38bdf8';
-    const label = dim.length > 30 ? dim.slice(0,29)+'…' : dim;
-    html += `<div class="bar-row">
-      <div class="bar-label" title="${dim}">${label}</div>
-      <div class="bar-track">
-        <div class="bar-fill" style="width:${pct}%;background:${color};">${m.toFixed(1)}</div>
-      </div>
-      <div class="bar-val">${m.toFixed(1)}</div>
-    </div>`;
+  groups.forEach(g => {
+    html += `<div class="bar-group-header" style="color:${g.color};border-bottom:2px solid ${g.color};">
+      <span class="bar-group-swatch" style="background:${g.color};"></span>${g.name}</div>`;
+    for (let i = g.start; i < g.end; i++) {
+      const dim = allDims[i];
+      const m = means[i];
+      const pct = m.toFixed(0);
+      const label = dim.length > 30 ? dim.slice(0,29)+'…' : dim;
+      html += `<div class="bar-row">
+        <div class="bar-label" title="${dim}" style="color:${g.color};font-weight:600;">${label}</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:${pct}%;background:${g.color};">${m.toFixed(1)}</div>
+        </div>
+        <div class="bar-val">${m.toFixed(1)}</div>
+      </div>`;
+    }
   });
   document.getElementById('meanScoresChart').innerHTML = html;
 }
