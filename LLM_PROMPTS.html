@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Key LLM API Prompts — Corporate Venturing Toolkit</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+         background: #f0f4f8; color: #1e293b; line-height: 1.55; }
+  header { background: #1d4ed8; color: #fff; padding: 40px 24px 34px; text-align: center; }
+  header h1 { font-size: 1.9rem; font-weight: 700; }
+  header p { opacity: .92; margin-top: 8px; font-size: 1rem; max-width: 760px; margin-left:auto; margin-right:auto; }
+  main { max-width: 1000px; margin: 0 auto; padding: 30px 22px 60px; }
+
+  .note { background:#fff; border:1px solid #cbd5e1; border-left:5px solid #1d4ed8;
+          border-radius:10px; padding:16px 20px; margin-bottom:26px; font-size:.93rem; color:#334155; }
+  .note code { background:#eef2ff; color:#3730a3; padding:1px 5px; border-radius:4px; font-size:.86em; }
+  .legend { display:flex; flex-wrap:wrap; gap:18px; align-items:center; margin-top:10px; font-size:.88rem; }
+  .legend span.inj { font-weight:600; }
+
+  .toc { background:#fff; border:1px solid #cbd5e1; border-radius:10px; padding:16px 22px; margin-bottom:30px; }
+  .toc h2 { font-size:1rem; color:#1d4ed8; margin-bottom:10px; text-transform:uppercase; letter-spacing:.05em; }
+  .toc ol { margin-left:20px; }
+  .toc li { margin:4px 0; font-size:.94rem; }
+  .toc a { color:#1d4ed8; text-decoration:none; }
+  .toc a:hover { text-decoration:underline; }
+  .toc .stage { display:inline-block; font-size:.72rem; font-weight:700; text-transform:uppercase;
+                letter-spacing:.04em; color:#64748b; margin-left:8px; }
+
+  .card { background:#fff; border:1px solid #cbd5e1; border-radius:12px; padding:22px 24px 24px;
+          margin-bottom:26px; scroll-margin-top:14px; }
+  .card .num { display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px;
+               border-radius:50%; background:#1d4ed8; color:#fff; font-weight:700; font-size:.95rem; margin-right:10px; }
+  .card h2 { font-size:1.22rem; display:flex; align-items:center; gap:2px; }
+  .badges { margin:12px 0 6px; display:flex; flex-wrap:wrap; gap:8px; }
+  .badge { font-size:.74rem; font-weight:600; padding:3px 9px; border-radius:20px; white-space:nowrap; }
+  .b-stage   { background:#dbeafe; color:#1e40af; }
+  .b-calls   { background:#dcfce7; color:#166534; }
+  .b-model   { background:#f3e8ff; color:#6b21a8; }
+  .b-tokens  { background:#fef9c3; color:#854d0e; }
+  .b-file    { background:#f1f5f9; color:#475569; font-family:ui-monospace,Menlo,monospace; }
+  .desc { color:#475569; font-size:.94rem; margin:8px 0 4px; }
+
+  .lbl { font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em;
+         color:#64748b; margin:18px 0 6px; }
+  pre { background:#0f172a; color:#e2e8f0; border-radius:8px; padding:14px 16px; overflow-x:auto;
+        font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:.8rem; line-height:1.5;
+        white-space:pre-wrap; word-break:break-word; }
+  pre.sys { background:#1e293b; }
+  .inj { background:#fde68a; color:#7c2d12; border-radius:3px; padding:0 3px; font-weight:600; }
+  pre .inj { background:#a16207; color:#fffbeb; }
+
+  table.vars { width:100%; border-collapse:collapse; margin-top:14px; font-size:.86rem; }
+  table.vars th, table.vars td { text-align:left; padding:7px 10px; border-bottom:1px solid #e2e8f0; vertical-align:top; }
+  table.vars th { background:#f8fafc; color:#475569; font-weight:600; text-transform:uppercase; font-size:.72rem; letter-spacing:.04em; }
+  table.vars td code { background:#fef3c7; color:#92400e; padding:1px 5px; border-radius:4px; font-size:.85em; font-weight:600; }
+  table.vars td.src { color:#64748b; }
+
+  footer { color:#94a3b8; font-size:.8rem; padding:24px; text-align:center; border-top:1px solid #e2e8f0; margin-top:10px; }
+
+  .pdf-btn { position:fixed; top:16px; right:16px; background:#fff; color:#1d4ed8; border:1px solid #1d4ed8;
+             border-radius:8px; padding:8px 14px; font-size:.85rem; font-weight:600; cursor:pointer; z-index:50;
+             box-shadow:0 2px 6px rgba(0,0,0,.08); }
+  .pdf-btn:hover { background:#1d4ed8; color:#fff; }
+  @media print { .pdf-btn { display:none; } pre { white-space:pre-wrap; } header { background:#1d4ed8 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; } }
+</style>
+</head>
+<body>
+<button class="pdf-btn" onclick="window.print()">⤓ Download PDF</button>
+
+<header>
+  <h1>Key LLM API Prompts</h1>
+  <p>The actual Claude prompts the Corporate Venturing Toolkit sends to the Anthropic API,
+     labelled by purpose. Highlighted <span style="background:#a16207;color:#fffbeb;padding:0 4px;border-radius:3px;">{curly&nbsp;braces}</span>
+     mark where Python data is injected at runtime.</p>
+</header>
+
+<main>
+  <div class="note">
+    <strong>How to read this page.</strong> Each card shows one API call: its <em>system</em> prompt
+    (fixed instructions) and its <em>user</em> prompt template. Text is reproduced from the source
+    modules (<code>cv_analyzer.py</code>, <code>cv_framework.py</code>); the literal output-schema
+    braces <code>{ }</code> are shown as the model actually receives them, and only the genuine
+    runtime substitutions are highlighted.
+    <div class="legend">
+      <span><span class="inj">{placeholder}</span> &nbsp;= value injected from Python at call time</span>
+      <span>·&nbsp; Model: <code>claude-sonnet-4-5-20250929</code> (pinned)</span>
+      <span>·&nbsp; <code>temperature = 0.0</code></span>
+      <span>·&nbsp; on-disk response cache + server-side prompt caching</span>
+    </div>
+  </div>
+
+  <div class="toc">
+    <h2>Pipeline order</h2>
+    <ol>
+      <li><a href="#p1">Rubric construction</a> <span class="stage">one-time setup</span></li>
+      <li><a href="#p2">Brief description</a> <span class="stage">one-time setup · Haiku</span></li>
+      <li><a href="#p3">Windowed evidence extraction</a> <span class="stage">per company · the main extractor</span></li>
+      <li><a href="#p4">Targeted cleanup re-extraction</a> <span class="stage">per company · only for empty dimensions</span></li>
+      <li><a href="#p5">Dimension scoring</a> <span class="stage">per company · the headline call (×N ensemble)</span></li>
+      <li><a href="#p6">Financial-metrics extraction</a> <span class="stage">per company</span></li>
+      <li><a href="#p7">Investment &amp; funds synthesis</a> <span class="stage">per company</span></li>
+    </ol>
+  </div>
+
+  <!-- ───────────────────────── 1. RUBRIC ───────────────────────── -->
+  <section class="card" id="p1">
+    <h2><span class="num">1</span> Rubric construction</h2>
+    <div class="badges">
+      <span class="badge b-stage">One-time setup</span>
+      <span class="badge b-calls">1 call per dimension (×15, cached)</span>
+      <span class="badge b-tokens">max_tokens 1500</span>
+      <span class="badge b-file">cv_framework.py · build_rubric_prompt</span>
+    </div>
+    <p class="desc">Turns each framework definition document into a structured scoring rubric
+       (definition summary, key indicators, 5 scoring bands, evidence phrases, and the
+       <em>cross-objective relevance</em> grid that later seeds the P×O matrix fallback).</p>
+
+    <div class="lbl">System</div>
+<pre class="sys">You are an expert in corporate venturing strategy and evaluation.
+You will create a structured scoring rubric from a definition document.
+Return ONLY valid JSON — no markdown, no preamble.</pre>
+
+    <div class="lbl">User template</div>
+<pre>Create a detailed scoring rubric for the corporate venturing dimension:
+"<span class="inj">{dimension_name}</span>"  (section: <span class="inj">{section}</span>)
+
+DEFINITION TEXT:
+<span class="inj">{definition_text}</span>          <span style="color:#64748b">(first 8000 chars; or a "use general knowledge" line if empty)</span>
+
+Return JSON in this EXACT structure:
+{
+  "dimension": "<span class="inj">{dimension_name}</span>",
+  "section": "<span class="inj">{section}</span>",
+  "definition_summary": "2-3 sentence synthesis of what this dimension means",
+  "key_indicators": [ "indicator 1: what to look for in a 10-K", "indicator 2", ... ],
+  "scoring_bands": {
+    "80_100": "What high emphasis (80-100) looks like in a 10-K filing",
+    "60_79":  "...", "40_59": "...", "20_39": "...", "0_19": "..."
+  },
+  "example_evidence_phrases": [ "example fragment (3-8 words)", ... ],
+  "financial_signals": [ "financial metric/disclosure evidencing this dimension", ... ],
+  "cross_objective_relevance": {
+    "Risk Management": "low/medium/high", "Market Expansion": "low/medium/high",
+    "Access to New Technology": "low/medium/high", "Develop Business Ecosystems": "low/medium/high",
+    "Social and Environmental Impact": "low/medium/high",
+    "Developing Entrepreneurial Culture and Capabilities": "low/medium/high"
+  }
+}</pre>
+
+    <table class="vars">
+      <tr><th>Injected</th><th>Source</th></tr>
+      <tr><td><code>{dimension_name}</code></td><td class="src">Dimension name, e.g. "Corporate Venture Capital"</td></tr>
+      <tr><td><code>{section}</code></td><td class="src">"practice" / "activity" / "objective"</td></tr>
+      <tr><td><code>{definition_text}</code></td><td class="src">Contents of the matching <code>framework/</code> or <code>framework_v2/</code> .txt file (truncated to 8000 chars)</td></tr>
+    </table>
+  </section>
+
+  <!-- ───────────────────────── 2. BRIEF DESC ───────────────────────── -->
+  <section class="card" id="p2">
+    <h2><span class="num">2</span> Brief description</h2>
+    <div class="badges">
+      <span class="badge b-stage">One-time setup</span>
+      <span class="badge b-calls">1 call per dimension (×15, cached)</span>
+      <span class="badge b-model">Haiku (cheap)</span>
+      <span class="badge b-file">cv_framework.py · _brief_desc_prompt</span>
+    </div>
+    <p class="desc">Adds a one–two sentence plain-English <code>brief_description</code> to each rubric.
+       This short text is what later gets embedded into the extraction prompt's "dimension guide".</p>
+
+    <div class="lbl">System</div>
+<pre class="sys">You write precise, plain-English descriptions of corporate venturing concepts.
+Return ONLY valid JSON — no markdown, no preamble.</pre>
+
+    <div class="lbl">User template</div>
+<pre>Write a 1-2 sentence plain-English description of "<span class="inj">{dim_name}</span>" as a corporate venturing dimension.
+The description should:
+- State clearly what this dimension measures
+- Mention 2-3 concrete signals that indicate its presence in a 10-K
+- Be usable as a search query to retrieve relevant 10-K passages
+
+Context:
+<span class="inj">{summary}</span>            <span style="color:#64748b">(rubric.definition_summary, first 600 chars)</span>
+
+Key indicators: <span class="inj">{indicators}</span>      <span style="color:#64748b">(rubric.key_indicators, first 5)</span>
+
+Return JSON:
+{"brief_description": "..."}</pre>
+
+    <table class="vars">
+      <tr><th>Injected</th><th>Source</th></tr>
+      <tr><td><code>{dim_name}</code></td><td class="src">Dimension name</td></tr>
+      <tr><td><code>{summary}</code></td><td class="src">The rubric's <code>definition_summary</code> from prompt&nbsp;1</td></tr>
+      <tr><td><code>{indicators}</code></td><td class="src">The rubric's first 5 <code>key_indicators</code></td></tr>
+    </table>
+  </section>
+
+  <!-- ───────────────────────── 3. EXTRACTION ───────────────────────── -->
+  <section class="card" id="p3">
+    <h2><span class="num">3</span> Windowed evidence extraction</h2>
+    <div class="badges">
+      <span class="badge b-stage">Per company · core</span>
+      <span class="badge b-calls">1 call per 60K-char window (whole document tiled)</span>
+      <span class="badge b-tokens">max_tokens 8000</span>
+      <span class="badge b-file">cv_analyzer.py · _batch_extraction_prompt</span>
+    </div>
+    <p class="desc">The main extractor. The entire narrative (Items 1, 1A, 2, 7, 8 incl. financial
+       footnotes) is tiled into overlapping 60K/6K-char windows; <strong>every window is scanned for
+       all 15 dimensions at once</strong>. The static prefix below is <em>prompt-cached</em>; only the
+       window text (sent as the user message) is billed at full rate per window.</p>
+
+    <div class="lbl">System</div>
+<pre class="sys">You are a corporate strategy analyst specialising in corporate venturing.
+Analyse 10-K filing text and extract evidence for multiple venturing dimensions simultaneously.
+
+CRITICAL PRINCIPLE: The dimension descriptions are CONCEPTUAL GUIDES, not semantic templates.
+Companies describe venturing activities using their own vocabulary — often enterprise, product,
+or financial language — which bears no surface resemblance to framework terminology.
+Your job is to recognise the UNDERLYING ACTIVITY, regardless of the words used.
+
+Return ONLY valid JSON — no markdown, no preamble.</pre>
+
+    <div class="lbl">User template — static prefix (prompt-cached)</div>
+<pre>Analyse a <span class="inj">{block_label}</span> excerpt from <span class="inj">{ticker}</span>'s 10-K filing.
+
+For EACH of the <span class="inj">{n_dims}</span> dimensions below, extract ALL relevant evidence present in the excerpt.
+
+KNOWN ENTITIES FOR <span class="inj">{ticker}</span>:                  <span style="color:#64748b">(entity_block — omitted if none discovered)</span>
+  Funds/Programmes: <span class="inj">{fund_descriptions}</span>
+  Portfolio companies: <span class="inj">{portfolio_companies}</span>
+
+DIMENSIONS TO ANALYSE:
+<span class="inj">{dim_guide}</span>
+   <span style="color:#64748b">└─ one line per dimension:  "- {dim}: {brief_description} | Indirect evidence (20-59): {mid_band} | Company hint: {dimension_hint}"</span>
+
+EXTRACTION RULES:
+- The dimension descriptions are CONCEPTUAL GUIDES, not vocabulary checklists.
+  A company doing the activity using different words still counts as evidence.
+- Extract DIRECT evidence (activity explicitly described) AND INDIRECT evidence
+  (same underlying activity described in the company's own terminology)
+- Examples of conceptual equivalence:
+    "Google Cloud Platform" → Business Services (providing infrastructure to users including startups)
+    "Other Bets / Waymo / Isomorphic Labs" → Venture Building (internal new venture creation)
+    "strategic investments and acquisitions" → Venture Clienting (engaging startups commercially)
+    "training, mentorship, and support programmes" → Mentorship
+- Do NOT require startup-specific language. Enterprise-scale activities that serve
+  the same function as the dimension describes count as indirect evidence.
+- Return empty arrays ONLY if the concept has truly NO expression in the excerpt.
+- COMPLETENESS: extract EVERY distinct relevant sentence — do NOT limit the count.
+- DISTINCTNESS: prefer DIFFERENT sentences for different dimensions.
+
+REQUIRED OUTPUT — a single JSON object with exactly <span class="inj">{n_dims}</span> keys, one per dimension:
+{
+  "<span class="inj">{example_dim}</span>": {"sentences": ["verbatim quote..."], "key_terms": ["term1"], "financial_figures": ["$X million"]},
+  ... (one entry per dimension listed above)
+}
+
+THE <span class="inj">{block_label}</span> EXCERPT TO ANALYSE FOLLOWS BELOW — extract evidence ONLY from this text:</pre>
+
+    <div class="lbl">User template — variable suffix (billed per window)</div>
+<pre><span class="inj">{window_text}</span>     <span style="color:#64748b">(one 60,000-char window of the narrative, with 6,000-char overlap into the next)</span></pre>
+
+    <table class="vars">
+      <tr><th>Injected</th><th>Source</th></tr>
+      <tr><td><code>{block_label}</code></td><td class="src">"NARRATIVE" for the 10-K, or "CURATED WEB" when <code>--with-scraped</code></td></tr>
+      <tr><td><code>{ticker}</code></td><td class="src">Company ticker</td></tr>
+      <tr><td><code>{n_dims}</code></td><td class="src">Number of dimensions in the batch (15)</td></tr>
+      <tr><td><code>{fund_descriptions}</code> / <code>{portfolio_companies}</code></td><td class="src">From <code>company_context.json</code> + entity discovery (RAG)</td></tr>
+      <tr><td><code>{dim_guide}</code></td><td class="src">Built from each rubric's <code>brief_description</code>, mid-band text, and the company's <code>dimension_hints</code></td></tr>
+      <tr><td><code>{window_text}</code></td><td class="src">The current overlapping window of the full narrative (or scraped text)</td></tr>
+    </table>
+  </section>
+
+  <!-- ───────────────────────── 4. CLEANUP ───────────────────────── -->
+  <section class="card" id="p4">
+    <h2><span class="num">4</span> Targeted cleanup re-extraction</h2>
+    <div class="badges">
+      <span class="badge b-stage">Per company · conditional</span>
+      <span class="badge b-calls">1 call per dimension still at 0 evidence</span>
+      <span class="badge b-tokens">max_tokens 1000</span>
+      <span class="badge b-file">cv_analyzer.py · cleanup_prompt</span>
+    </div>
+    <p class="desc">A safety net: any single dimension that came back with <em>no</em> evidence after the
+       windowed pass is re-scanned over the whole narrative, focused on that one concept.</p>
+
+    <div class="lbl">System</div>
+<pre class="sys">You are a corporate strategy analyst. Extract evidence from 10-K filing text.
+Return ONLY valid JSON — no markdown fences, no preamble.</pre>
+
+    <div class="lbl">User template</div>
+<pre>Analyse this 10-K excerpt for <span class="inj">{ticker}</span>.
+
+Find ANY evidence for this ONE dimension — direct or indirect:
+
+DIMENSION: <span class="inj">{dim}</span>
+CONCEPT: <span class="inj">{brief}</span>
+
+IMPORTANT: The description above is a CONCEPTUAL GUIDE, not a vocabulary list.
+The company likely uses completely different words for the same activity.
+Look for the underlying BEHAVIOUR, not the rubric terminology.
+
+What indirect evidence looks like (score 20-59):
+<span class="inj">{mid_band_or_low_band}</span>
+
+How <span class="inj">{ticker}</span> expresses this: <span class="inj">{hint}</span>      <span style="color:#64748b">(only if a dimension_hint exists)</span>
+
+Examples of what to look for regardless of exact wording:
+- Strategic investments / acquisitions / joint ventures → Venture Clienting
+- Internal subsidiaries / new business units / moonshots → Venture Building
+- Platform / infrastructure / tools provided to customers → Business Services
+- Training / coaching / advisory / board involvement → Mentorship
+
+TEXT (<span class="inj">{n_chars}</span> chars):
+<span class="inj">{full_narrative_text}</span>
+
+Return JSON (empty arrays only if truly ZERO connection):
+{"sentences": ["verbatim quote (max 150 chars)"], "key_terms": ["term"], "financial_figures": ["$X"]}</pre>
+
+    <table class="vars">
+      <tr><th>Injected</th><th>Source</th></tr>
+      <tr><td><code>{dim}</code> / <code>{brief}</code></td><td class="src">The empty dimension's name and brief description</td></tr>
+      <tr><td><code>{mid_band_or_low_band}</code></td><td class="src">The rubric's 40–59 (else 20–39) scoring-band text</td></tr>
+      <tr><td><code>{hint}</code></td><td class="src">The company's <code>dimension_hints</code> entry, if any</td></tr>
+      <tr><td><code>{full_narrative_text}</code></td><td class="src">The entire narrative (this pass is recall-focused, not windowed)</td></tr>
+    </table>
+  </section>
+
+  <!-- ───────────────────────── 5. SCORING ───────────────────────── -->
+  <section class="card" id="p5">
+    <h2><span class="num">5</span> Dimension scoring <span style="font-size:.8rem;font-weight:500;color:#64748b;margin-left:6px;">— the headline call</span></h2>
+    <div class="badges">
+      <span class="badge b-stage">Per company · core</span>
+      <span class="badge b-calls">N independent passes (ensemble, default N=5) → per-dimension median</span>
+      <span class="badge b-tokens">max_tokens 16000</span>
+      <span class="badge b-file">cv_analyzer.py · _scoring_prompt</span>
+    </div>
+    <p class="desc">All merged evidence for all 15 dimensions is sent in one call. The model returns the
+       0–100 emphasis scores, ranks, descriptions, top quotes, rubric bands, and the practice×objective
+       matrix. Run <span class="inj">{N}</span> times on the same evidence; the reported score is the
+       per-dimension median and the spread becomes the uncertainty / error bars.</p>
+
+    <div class="lbl">System</div>
+<pre class="sys">You are a corporate venturing strategy expert. Score and rank dimensions
+based on aggregated 10-K evidence and detailed rubrics.
+
+CRITICAL PRINCIPLE: Rubric descriptions are CONCEPTUAL GUIDES, not literal checklists.
+They describe what each dimension MEANS, not what words must appear in the filing.
+Score based on whether the company IS DOING the activity — the spirit of the dimension —
+not whether they use the rubric's specific terminology.
+
+Example: A company whose 10-K describes providing cloud infrastructure to enterprise
+customers (including startups) IS providing Business Services, even if it says nothing
+about "portfolio companies" or "startup support programmes."
+
+Return ONLY valid JSON — no markdown, no preamble.</pre>
+
+    <div class="lbl">User template</div>
+<pre>Score ALL 15 corporate venturing dimensions for <span class="inj">{company}</span> (<span class="inj">{ticker}</span>).
+
+CRITICAL: Use ONLY the exact dimension names listed below. Do NOT invent new names.
+
+PRACTICES (4):   <span class="inj">{PRACTICES}</span>
+ACTIVITIES (4):  <span class="inj">{ACTIVITIES}</span>
+OBJECTIVES (7):  <span class="inj">{OBJECTIVES}</span>
+
+AGGREGATED EVIDENCE + RUBRICS:
+<span class="inj">{merged_evidence_and_rubrics_json}</span>
+   <span style="color:#64748b">└─ per dimension: company_specific_context, evidence_sentences[:20], financial_figures, key_terms_found, definition_brief, compact scoring_bands  (truncated to 120,000 chars)</span>
+
+SCORING GUIDANCE:
+- Rubric descriptions define the CONCEPT, not a vocabulary list. Score the activity, not the words.
+- company_specific_context (when present) shows how THIS company expresses the activity.
+- Score 20-39: any incidental or indirect reference to the underlying activity.
+- Score 40-59: clear but generic or enterprise-scale expression of the activity.
+- Score 60-79: explicit, named, or quantified expression of the activity.
+- Score 80-100: comprehensive, strategic, multi-faceted expression with metrics.
+- Score 0 ONLY when the evidence has NO conceptual connection. If evidence is non-empty, score is almost never 0.
+
+Return this EXACT JSON structure with all dimensions populated:
+{
+  "ticker": "<span class="inj">{ticker}</span>",
+  "company": "<span class="inj">{company}</span>",
+  "practices":  { <span class="inj">{dim_block(PRACTICES)}</span> },
+  "activities": { <span class="inj">{dim_block(ACTIVITIES)}</span> },
+  "objectives": { <span class="inj">{dim_block(OBJECTIVES)}</span> },
+  "practice_x_objective_matrix": { <span class="inj">{matrix_block}</span> },
+  "overall_assessment": {
+    "venturing_tier": "Tier 1 / Tier 2 / Tier 3",
+    "dominant_practice": "name from practices list",
+    "dominant_objective": "name from objectives list",
+    "total_emphasis_score": 0,
+    "strategic_posture": "2-3 sentence overall assessment",
+    "key_strengths": ["strength 1", "strength 2"],
+    "key_gaps": ["gap 1", "gap 2"]
+  }
+}
+
+Scoring rules:
+- emphasis_score: 0-100 based on evidence depth, financial scale, strategic language
+- rank: 1=highest; practices 1-4, activities 1-4, objectives 1-7 (ranked separately)
+- practice_x_objective_matrix: how strongly each practice/activity SERVES each objective (0-100)
+- total_emphasis_score: sum of all 15 dimension scores
+- activities with no 10-K evidence score 0 — do not fabricate
+- NEVER rename or skip any dimension
+- top_quote: the SINGLE most specific sentence for THIS dimension — every dimension MUST have a DIFFERENT quote.</pre>
+
+    <p class="desc" style="margin-top:14px;"><strong>Where <code>{dim_block(...)}</code> expands</strong> — one entry per dimension:</p>
+<pre>"<span class="inj">{dim}</span>": {"emphasis_score": 0, "rank": 1, "evidence_count": 0, "description": "...",
+         "top_quote": "...", "rubric_band": "...", "scoring_rationale": "..."}</pre>
+    <p class="desc"><strong>Where <code>{matrix_block}</code> expands</strong> — one row per practice/activity, columns = the 7 objectives:</p>
+<pre>"<span class="inj">{practice}</span>": {"Risk Management": 0, "Market Expansion": 0, "Access to New Technology": 0,
+              "Develop Business Ecosystems": 0, "Social and Environmental Impact": 0,
+              "Developing Entrepreneurial Culture and Capabilities": 0, "Financial Return": 0}</pre>
+
+    <table class="vars">
+      <tr><th>Injected</th><th>Source</th></tr>
+      <tr><td><code>{company}</code> / <code>{ticker}</code></td><td class="src">Company identifiers</td></tr>
+      <tr><td><code>{PRACTICES}</code> / <code>{ACTIVITIES}</code> / <code>{OBJECTIVES}</code></td><td class="src">The canonical dimension-name lists from <code>cv_config.py</code></td></tr>
+      <tr><td><code>{merged_evidence_and_rubrics_json}</code></td><td class="src">The merged extraction output (prompts 3+4) joined with the compact rubrics — the heart of the call</td></tr>
+      <tr><td><code>{dim_block(...)}</code> / <code>{matrix_block}</code></td><td class="src">Code-generated JSON skeletons so the model returns an exact, parseable shape</td></tr>
+    </table>
+  </section>
+
+  <!-- ───────────────────────── 6. FINANCIAL ───────────────────────── -->
+  <section class="card" id="p6">
+    <h2><span class="num">6</span> Financial-metrics extraction</h2>
+    <div class="badges">
+      <span class="badge b-stage">Per company</span>
+      <span class="badge b-calls">1 call</span>
+      <span class="badge b-file">cv_analyzer.py · _financial_prompt</span>
+    </div>
+    <p class="desc">Text-based extraction of 34 GAAP/CVC metrics from the financial sections. These results
+       are then <em>overridden</em> by authoritative XBRL structured data for all standard metrics
+       (<code>cv_sec.merge_xbrl_into_financials</code>).</p>
+
+    <div class="lbl">System</div>
+<pre class="sys">You are a financial analyst extracting specific metrics from 10-K filing text.
+Return ONLY valid JSON — no markdown, no preamble.</pre>
+
+    <div class="lbl">User template</div>
+<pre>Extract the following financial metrics from the <span class="inj">{ticker}</span> 10-K filing text.
+Use null for any metric not found. All monetary values in USD millions.
+Percentages as decimal numbers (e.g. 15.3 for 15.3%).
+
+Metrics to extract:
+<span class="inj">{metric_list}</span>        <span style="color:#64748b">(34 metrics: "name": label (unit), one per line)</span>
+
+Return JSON:
+{
+  "fiscal_year": "YYYY",
+  "currency": "USD",
+  "metrics": {
+    "revenue_total": 350000,
+    "revenue_yoy_pct": 14.0,
+    ... (all 34 metrics, null if not found)
+  },
+  "extraction_notes": "brief note on data quality or gaps"
+}
+
+10-K TEXT (key financial sections):
+<span class="inj">{financial_window}</span>       <span style="color:#64748b">(best ~50,000-char window of the Item 7 / Item 8 financial text)</span></pre>
+
+    <table class="vars">
+      <tr><th>Injected</th><th>Source</th></tr>
+      <tr><td><code>{ticker}</code></td><td class="src">Company ticker</td></tr>
+      <tr><td><code>{metric_list}</code></td><td class="src">The 34-entry <code>FINANCIAL_METRICS</code> table from <code>cv_config.py</code></td></tr>
+      <tr><td><code>{financial_window}</code></td><td class="src">The most number-dense window of the financial statements (selected by <code>_best_financial_window</code>)</td></tr>
+    </table>
+  </section>
+
+  <!-- ───────────────────────── 7. INVEST ───────────────────────── -->
+  <section class="card" id="p7">
+    <h2><span class="num">7</span> Investment &amp; funds synthesis</h2>
+    <div class="badges">
+      <span class="badge b-stage">Per company</span>
+      <span class="badge b-calls">1 call</span>
+      <span class="badge b-tokens">max_tokens 1500</span>
+      <span class="badge b-file">cv_analyzer.py · _extract_investment_and_funds</span>
+    </div>
+    <p class="desc">Synthesises the merged evidence, discovered fund descriptions, the scraper's structured
+       output, and the financial figures into the <code>investment_and_funds</code> field:
+       number of investments, fund name(s)/size(s), and investment preferences.</p>
+
+    <div class="lbl">System</div>
+<pre class="sys">You are a corporate venturing analyst. From the evidence provided, extract
+structured facts about the company's venture INVESTMENTS and FUNDS. Report ONLY what the evidence
+supports; use null (never a guess) when something is not stated. Return ONLY valid JSON, no prose.</pre>
+
+    <div class="lbl">User template</div>
+<pre>Company: <span class="inj">{company}</span> (<span class="inj">{ticker}</span>)
+
+STRUCTURED EVIDENCE:
+<span class="inj">{struct_json}</span>       <span style="color:#64748b">(named_funds, fund_descriptions, investment_vehicles, portfolio_companies, scraped_cvc, financial_metrics — first 6000 chars)</span>
+
+EVIDENCE SENTENCES (10-K + curated web):
+<span class="inj">{evidence_sentences_json}</span>     <span style="color:#64748b">(up to 40 deduped sentences from the 4 practice dimensions — first 7000 chars)</span>
+
+CURATED WEB TEXT (excerpt):
+<span class="inj">{scraped_text}</span>      <span style="color:#64748b">(first 18000 chars, empty if not scraped)</span>
+
+Return EXACTLY this JSON (use null wherever the evidence is silent — do NOT invent figures):
+{
+  "num_investments": "count or range with unit (e.g. '400+ portfolio companies') or null",
+  "funds": [
+    {"name": "fund/vehicle name", "size": "AUM / fund size / committed capital if stated, else null",
+     "type": "CVC | Accelerator | Incubator | Growth | Impact | other", "notes": "one short line, else null"}
+  ],
+  "investment_preferences": {
+    "check_size": "typical investment / check size or range, else null",
+    "stage": "seed / early / growth / late, etc., else null",
+    "geography": "regions / countries of focus, else null",
+    "technology": "sectors / technology areas of focus, else null"
+  },
+  "evidence_quotes": ["up to 5 short verbatim quotes supporting the above"],
+  "sources": "which evidence informed this (e.g. '10-K + curated web')"
+}</pre>
+
+    <table class="vars">
+      <tr><th>Injected</th><th>Source</th></tr>
+      <tr><td><code>{company}</code> / <code>{ticker}</code></td><td class="src">Company identifiers</td></tr>
+      <tr><td><code>{struct_json}</code></td><td class="src">Entity-discovery output + scraper's CVC fields + filtered financial metrics</td></tr>
+      <tr><td><code>{evidence_sentences_json}</code></td><td class="src">Deduped sentences from the 4 practice dimensions of the merged evidence</td></tr>
+      <tr><td><code>{scraped_text}</code></td><td class="src">Curated-web text (only when <code>--with-scraped</code> was used)</td></tr>
+    </table>
+  </section>
+
+  <div class="note" style="border-left-color:#64748b; margin-top:4px;">
+    <strong>Not shown here.</strong> Two non-LLM steps shape what the prompts above receive but make no
+    Claude call of their own: <em>entity discovery</em> (BM25 + sentence-transformer RAG over the filing,
+    used only to surface fund/portfolio names) and <em>XBRL merge</em> (authoritative SEC structured
+    financials that overwrite prompt&nbsp;6's text extraction). A small JSON-repair prompt also exists,
+    invoked only when a response fails to parse.
+  </div>
+</main>
+
+<footer>&copy; 2026 Sheryl Winston Smith &nbsp;&middot;&nbsp; Corporate Venturing Toolkit — LLM Prompts Reference</footer>
+</body>
+</html>
