@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Corporate Venturing Toolkit — Implementation Guide</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+         background: #f0f4f8; color: #1e293b; line-height: 1.6; }
+  header { background: #1d4ed8; color: #fff; padding: 40px 48px 30px; }
+  header h1 { font-size: 1.9rem; font-weight: 700; margin-bottom: 6px; }
+  header p { opacity: 0.9; max-width: 820px; }
+  .badge { display:inline-block; background: rgba(255,255,255,0.18); border-radius: 20px;
+           padding: 3px 12px; font-size: 0.8rem; margin: 10px 6px 0 0; }
+  main { max-width: 1080px; margin: 0 auto; padding: 36px 24px 90px; }
+  h2 { font-size: 1.3rem; color: #1d4ed8; border-bottom: 2px solid #bfdbfe;
+       padding-bottom: 6px; margin: 42px 0 16px; }
+  h3 { font-size: 1.05rem; margin: 22px 0 8px; }
+  p, li { font-size: 0.93rem; }
+  ul, ol { margin: 8px 0 8px 22px; }
+  code { background: #e2e8f0; padding: 1px 5px; border-radius: 4px;
+         font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.86em; }
+  pre { background: #0f172a; color: #e2e8f0; padding: 14px 16px; border-radius: 8px;
+        overflow-x: auto; font-size: 0.82rem; margin: 10px 0; line-height: 1.45; }
+  pre code { background: none; color: inherit; padding: 0; }
+  .card { background: #fff; border: 1px solid #cbd5e1; border-radius: 10px;
+          padding: 20px 24px; margin-bottom: 16px; }
+  /* step block */
+  .step { background:#fff; border:1px solid #cbd5e1; border-left: 5px solid #1d4ed8;
+          border-radius: 8px; padding: 18px 22px; margin: 14px 0; }
+  .step.optional { border-left-color: #7c3aed; }
+  .step .num { display:inline-block; background:#1d4ed8; color:#fff; font-weight:700;
+               border-radius: 50%; width: 28px; height: 28px; text-align:center;
+               line-height: 28px; margin-right: 8px; font-size: 0.85rem; }
+  .step.optional .num { background:#7c3aed; }
+  .step h3 { display:inline; font-size: 1.08rem; }
+  .opt-tag { background:#ede9fe; color:#6d28d9; font-size:0.7rem; font-weight:700;
+             padding: 2px 8px; border-radius: 10px; margin-left: 8px; vertical-align: middle; }
+  .meta { margin-top: 12px; }
+  .meta div { margin: 5px 0; font-size: 0.88rem; }
+  .meta .lbl { display:inline-block; min-width: 96px; font-weight:600; color:#475569; vertical-align: top; }
+  .out { color:#15803d; }
+  table { width:100%; border-collapse: collapse; margin: 10px 0; font-size: 0.86rem; }
+  th, td { border:1px solid #cbd5e1; padding: 7px 10px; text-align:left; vertical-align: top; }
+  th { background:#eff6ff; color:#1e40af; }
+  tr:nth-child(even) td { background:#f8fafc; }
+  .flow { background:#0f172a; color:#cbd5e1; border-radius:10px; padding:18px 20px;
+          font-family: ui-monospace, Menlo, monospace; font-size: 0.8rem; overflow-x:auto;
+          line-height: 1.5; white-space: pre; }
+  .note { background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:12px 16px;
+          font-size:0.86rem; margin:12px 0; }
+  .tip  { background:#ecfdf5; border:1px solid #a7f3d0; border-radius:8px; padding:12px 16px;
+          font-size:0.86rem; margin:12px 0; }
+  footer { background:#1e293b; color:#94a3b8; text-align:center; padding:20px; font-size:0.8rem; }
+  .small { font-size: 0.82rem; color:#64748b; }
+</style>
+</head>
+<body>
+
+<style>
+  .pdf-btn { position: fixed; top: 16px; right: 16px; z-index: 1000;
+    background: #1d4ed8; color: #fff; border: none; border-radius: 8px;
+    padding: 8px 14px; font-size: .85rem; font-weight: 600; cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,.25); }
+  .pdf-btn:hover { background: #1e40af; }
+  @media print { .no-print { display: none !important; } }
+</style>
+<button class="pdf-btn no-print" onclick="window.print()"
+        title="Save this page as PDF — choose 'Save as PDF' in the print dialog">⤓ Download PDF</button>
+
+<header>
+  <h1>Corporate Venturing Toolkit — Implementation Guide</h1>
+  <p>End-to-end, step-by-step process for analysing corporate venturing from 10-K filings and curated
+     web sources — from document identification to the final portfolio dashboard. Each step lists the
+     <strong>programs used</strong> and the <strong>files created</strong>.</p>
+  <div>
+    <span class="badge">15 Dimensions</span>
+    <span class="badge">Windowed Extraction</span>
+    <span class="badge">Ensemble Scoring (median + uncertainty)</span>
+    <span class="badge">Curated-Web Augmentation</span>
+    <span class="badge">Claude Sonnet 4.5 (pinned 20250929)</span>
+  </div>
+</header>
+
+<main>
+
+<!-- ───────────────────────────── OVERVIEW ───────────────────────────── -->
+<h2>0 · Pipeline at a glance</h2>
+<div class="flow">TICKER
+  │
+  ▼  (1) Document identification + fetch ........ cv_sec.py / sec_filing_cache.py / corporate_identifiers_2.py
+  ▼  (2) Preprocess into narrative sections ...... cv_analyzer.preprocess_10k / parse_narrative_sections
+  ▼  (3) Build RAG index ......................... cv_rag.build_index  (BM25 + MiniLM embeddings)
+  ▼  (4) Entity discovery ........................ cv_rag.discover_investment_entities  (uses the index)
+  ▼  (5) Windowed extraction (all 15 dims) ....... cv_analyzer._window_text + _run_batch_extraction
+  ▼  (6) [optional] Curated-web augmentation ..... cv_url_scraper.py  +  analyze --with-scraped
+  ▼  (7) Financial extraction + XBRL merge ....... cv_analyzer + cv_sec.merge_xbrl_into_financials
+  ▼  (8) Ensemble scoring (median + uncertainty) . cv_analyzer._scoring_prompt + _aggregate_ensemble
+  ▼  (9) Investment &amp; funds extraction .......... cv_analyzer._extract_investment_and_funds
+  ▼ (10) Persist ................................. outputs_v2/&lt;TICKER&gt;/analysis.json
+  ▼ (11) Per-company visuals + ensemble report ... cv_visualizer.py + ensemble_report.py
+  ▼ (12) Portfolio aggregation .................. cv_report.py + cv_portfolio.py
+  ▼
+PORTFOLIO: master_dataframe.csv · portfolio_dashboard.html · portfolio_report.docx</div>
+
+<p class="small">Orchestration entry point: <code>cv_toolkit.py</code> (all sub-commands). The batch driver
+<code>run_batch_v2.sh</code> runs steps 1–12 for the whole company list using the broader
+<code>framework_v2/</code> rubrics, writing to <code>outputs_v2/</code>.</p>
+
+<!-- ───────────────────────────── PREREQS ───────────────────────────── -->
+<h2>Prerequisites &amp; one-time setup</h2>
+<div class="card">
+<pre><code>conda activate cv_env
+pip install -r requirements.txt
+export TOKENIZERS_PARALLELISM=false        # silence HuggingFace fork warning
+
+# API key — stored in a git-ignored .env at repo root (loaded by cv_config.load_dotenv())
+echo 'ANTHROPIC_API_KEY=sk-ant-...' > .env</code></pre>
+<p><strong>Build the scoring rubrics once</strong> (converts the framework definitions into scoring bands +
+key indicators, cached in <code>.cv_cache/</code>):</p>
+<pre><code>python cv_toolkit.py rubrics      # build outputs/rubrics.json from framework/*.txt   (cv_framework.py)
+python cv_toolkit.py describe     # add plain-English brief_descriptions (Haiku)
+# v2 rubrics (broader definitions) are built automatically by run_batch_v2.sh → outputs_v2/rubrics.json</code></pre>
+<table>
+  <tr><th>Program</th><th>Role in setup</th><th>Creates</th></tr>
+  <tr><td><code>cv_config.py</code></td><td>Single source of truth: dimensions, colours, paths, model pin, windowing / ensemble / caching toggles; loads <code>.env</code>.</td><td>—</td></tr>
+  <tr><td><code>cv_framework.py</code></td><td>Builds rubrics from <code>framework/</code> &amp; <code>framework_v2/</code> definition files via Claude.</td><td><code>outputs/rubrics.json</code>, <code>outputs_v2/rubrics.json</code></td></tr>
+</table>
+</div>
+
+<!-- ───────────────────────────── STEP 1 ───────────────────────────── -->
+<h2>The 12 steps</h2>
+
+<div class="step">
+  <span class="num">1</span><h3>Document identification &amp; fetch</h3>
+  <p>Resolve the ticker to an SEC entity, locate its latest 10-K, and download the complete filing plus
+     structured financials. Everything is cached so repeat runs are instant.</p>
+  <div class="meta">
+    <div><span class="lbl">Programs</span> <code>corporate_identifiers_2.py</code> (ticker → CIK / company name lookup, 60 companies) · <code>cv_sec.py</code> (<code>get_filing_text()</code>, <code>fetch_xbrl_financials()</code>) · <code>sec_filing_cache.py</code> (EDGAR download, SQLite cache, HTML/SGML section extraction with TOC-skip)</div>
+    <div><span class="lbl">Command</span> <code>python cv_toolkit.py preprocess --ticker GOOGL</code> &nbsp;(auto-downloads; no local file needed) — or <code>fetch</code> to only download</div>
+    <div><span class="lbl">Input</span> A ticker (e.g. <code>GOOGL</code>). Optionally a local 10-K via <code>--file</code>.</div>
+    <div><span class="lbl out">Creates</span> <code>sec_cache/sec_filings.sqlite</code> (full SGML, keyed by CIK+accession) · <code>outputs/&lt;TICKER&gt;_xbrl_financials.json</code> (authoritative GAAP/CVC metrics)</div>
+  </div>
+</div>
+
+<!-- ───────────────────────────── STEP 2 ───────────────────────────── -->
+<div class="step">
+  <span class="num">2</span><h3>Preprocess into narrative sections</h3>
+  <p>Strip XBRL/HTML boilerplate and isolate the analytical text — <strong>Items 1, 1A, 2, 7, and all of
+     Item 8 including the financial-statement footnotes</strong>. If the input is already a clean narrative,
+     it is detected (<code>_looks_like_clean_narrative</code>) and used as-is to avoid lossy re-processing
+     that would drop Item 8 notes.</p>
+  <div class="meta">
+    <div><span class="lbl">Programs</span> <code>cv_analyzer.py</code> → <code>preprocess_10k()</code>, <code>parse_narrative_sections()</code>, <code>_extract_financial_section()</code></div>
+    <div><span class="lbl">Input</span> Cached SGML filing (Step 1).</div>
+    <div><span class="lbl out">Creates</span> <code>outputs/&lt;TICKER&gt;_narrative.txt</code> (the clean full narrative, e.g. ~253K chars for GOOGL)</div>
+  </div>
+</div>
+
+<!-- ───────────────────────────── STEP 3 ───────────────────────────── -->
+<div class="step">
+  <span class="num">3</span><h3>Build the RAG index</h3>
+  <p>Split the narrative into ~1,000-char passages and build a hybrid retrieval index:
+     <strong>BM25 + <code>all-MiniLM-L6-v2</code> sentence embeddings</strong>. The index supports
+     <code>index.query()</code> = BM25 (≈60 candidates) re-ranked by cosine, blended 60% BM25 / 40% cosine.</p>
+  <div class="note"><strong>Scope of RAG:</strong> the index is used <em>only</em> in Step 4 (entity discovery).
+     It does <strong>not</strong> select the evidence that gets scored — Steps 5/8 read the full document. RAG here
+     is a focusing/retrieval tool, not a scorer.</div>
+  <div class="meta">
+    <div><span class="lbl">Programs</span> <code>cv_rag.py</code> → <code>build_index()</code>, <code>TenKIndex</code>, <code>split_passages()</code></div>
+    <div><span class="lbl">Input</span> The narrative text (+ financial section) from Step 2.</div>
+    <div><span class="lbl out">Creates</span> In-memory index (not persisted); embedding model cached locally by sentence-transformers.</div>
+  </div>
+</div>
+
+<!-- ───────────────────────────── STEP 4 ───────────────────────────── -->
+<div class="step">
+  <span class="num">4</span><h3>Entity discovery (the RAG consumer)</h3>
+  <p>Identify the company's named funds, vehicles, and portfolio companies, in three stages:</p>
+  <ol>
+    <li><strong>Stage 0 — curated context</strong> (not RAG): load known funds / portfolio companies and
+        per-dimension <code>dimension_hints</code> from <code>company_context.json</code>.</li>
+    <li><strong>Stage 1 — RAG retrieval</strong>: for each investment-themed seed query, call
+        <code>index.query(seed_query, top_k=5)</code>; keep the top ~20 highest-scoring passages — i.e. RAG
+        surfaces the investment-relevant slice of the filing.</li>
+    <li><strong>Stage 1b — pattern matching</strong>: regexes scan <em>those passages</em> for fund names,
+        "formerly / through our X" patterns, portfolio companies, and vehicle language.</li>
+    <li><strong>Stage 2 — Claude refinement</strong> (only if &lt;2 funds found): send the top passages to
+        Claude for additional entities.</li>
+  </ol>
+  <div class="meta">
+    <div><span class="lbl">Programs</span> <code>cv_rag.py</code> → <code>discover_investment_entities()</code> · reads <code>company_context.json</code></div>
+    <div><span class="lbl">Output</span> An <code>entities</code> dict: <code>named_funds</code>, <code>portfolio_companies</code>, <code>investment_vehicles</code>, <code>curated_fund_descriptions</code>, <code>dimension_hints</code> — injected as context into Steps 5, 6 &amp; 9.</div>
+  </div>
+</div>
+
+<!-- ───────────────────────────── STEP 5 ───────────────────────────── -->
+<div class="step">
+  <span class="num">5</span><h3>Windowed extraction (all 15 dimensions)</h3>
+  <p>Tile the <strong>entire</strong> narrative into <strong>overlapping 60K-char windows (6K overlap)</strong>
+     and scan <strong>every window for all 15 dimensions</strong> via Claude. Nothing is truncated; evidence
+     (verbatim sentences, key terms, financial figures) is merged and de-duplicated across windows. A cleanup
+     pass re-extracts any practice still showing zero evidence.</p>
+  <div class="meta">
+    <div><span class="lbl">Programs</span> <code>cv_analyzer.py</code> → <code>_window_text()</code>, <code>_run_batch_extraction()</code>, <code>_batch_extraction_prompt()</code></div>
+    <div><span class="lbl">Inputs</span> Full narrative + rubrics + <code>entities</code> context. Server-side <strong>prompt caching</strong> on the shared prompt prefix.</div>
+    <div><span class="lbl out">Creates</span> <code>outputs_v2/&lt;TICKER&gt;/extraction_checkpoint.json</code> (the merged evidence <code>agg</code>) · API responses cached to <code>.cv_cache/&lt;md5&gt;.txt</code></div>
+  </div>
+</div>
+
+<!-- ───────────────────────────── STEP 6 (optional) ───────────────────────────── -->
+<div class="step optional">
+  <span class="num">6</span><h3>Curated-web augmentation</h3><span class="opt-tag">OPTIONAL</span>
+  <p>Pull curated CVC / Accelerator / Impact web pages and fold them into the evidence. Two parts:</p>
+  <ol>
+    <li><strong>Scrape</strong> (<code>scrape</code> sub-command → wraps <code>cv_url_scraper.py</code>): reads the
+        URL workbook, fetches each page (requests/httpx + BeautifulSoup), and a Claude pass extracts
+        structured CVC/accelerator/impact facts.</li>
+    <li><strong>Merge</strong> (<code>analyze --with-scraped</code>): the scraped full text is run through the
+        <em>same</em> windowed all-15-dimension extractor (so it informs <strong>every dimension incl. all 7
+        objectives</strong>) and merged into the 10-K evidence before scoring. The result is tagged
+        <code>scraped_evidence_used: true</code>.</li>
+  </ol>
+  <div class="meta">
+    <div><span class="lbl">Programs</span> <code>cv_url_scraper.py</code> (lazy-imported by <code>cv_toolkit.py</code>) · <code>cv_analyzer._load_scraped_text()</code>, <code>_load_scraped_extracted()</code></div>
+    <div><span class="lbl">Commands</span> <code>python cv_toolkit.py scrape --ticker GOOGL</code> &nbsp;then&nbsp; <code>analyze ... --with-scraped</code></div>
+    <div><span class="lbl">Input</span> <code>20260604_CV_urls_updated.xlsx</code> (curated URLs per ticker, read fresh each run)</div>
+    <div><span class="lbl out">Creates</span> <code>scraped/&lt;TICKER&gt;/result.json</code> · <code>scraped/&lt;TICKER&gt;/&lt;TICKER&gt;_{CVC,Accelerator,Impact}.txt</code> · <code>cv_url_results.json</code> (master)</div>
+  </div>
+</div>
+
+<!-- ───────────────────────────── STEP 7 ───────────────────────────── -->
+<div class="step">
+  <span class="num">7</span><h3>Financial extraction + XBRL merge</h3>
+  <p>One Claude pass extracts financial metrics from the financial section; then authoritative XBRL values
+     (revenue, R&amp;D, CVC portfolio value, buybacks, etc.) <strong>override</strong> the text extraction for
+     all standard GAAP metrics.</p>
+  <div class="meta">
+    <div><span class="lbl">Programs</span> <code>cv_analyzer.py</code> (financial prompt) · <code>cv_sec.merge_xbrl_into_financials()</code></div>
+    <div><span class="lbl">Inputs</span> Financial section text + <code>outputs/&lt;TICKER&gt;_xbrl_financials.json</code> (Step 1).</div>
+    <div><span class="lbl">Output</span> <code>financials</code> block (merged into <code>analysis.json</code> at Step 10).</div>
+  </div>
+</div>
+
+<!-- ───────────────────────────── STEP 8 ───────────────────────────── -->
+<div class="step">
+  <span class="num">8</span><h3>Ensemble scoring (median + uncertainty)</h3>
+  <p>All dimension evidence is sent together for scoring. With <code>ENSEMBLE_SCORING_N &gt; 1</code> (default 5),
+     scoring runs <strong>N independent passes on the same evidence</strong> (<code>temperature=0</code>); the
+     reported value per dimension is the <strong>median</strong>, with min/max/std as the
+     <strong>uncertainty</strong>. Ranks are recomputed from medians, the P×O matrix cells are medianed, and the
+     headline total is the <strong>median of per-pass totals</strong> (range stored; <code>sum_of_medians</code>
+     kept separately). Each pass uses a distinct cache slot, so first run draws fresh samples and reruns
+     reproduce them.</p>
+  <div class="meta">
+    <div><span class="lbl">Programs</span> <code>cv_analyzer.py</code> → <code>_scoring_prompt()</code>, <code>_aggregate_ensemble()</code></div>
+    <div><span class="lbl">Output</span> emphasis scores (0–100), ranks, descriptions, top quotes, rubric bands, P×O matrix, <code>score_uncertainty</code> per dimension.</div>
+    <div><span class="lbl out">Creates</span> <code>outputs_v2/&lt;TICKER&gt;/ensemble_scores.json</code> (per-dimension samples + stats)</div>
+  </div>
+</div>
+
+<!-- ───────────────────────────── STEP 9 ───────────────────────────── -->
+<div class="step">
+  <span class="num">9</span><h3>Investment &amp; funds extraction</h3>
+  <p>A dedicated synthesis call combines the merged evidence, the discovered fund descriptions, the scraper's
+     structured output, and the financial figures into a structured <code>investment_and_funds</code> field:
+     <strong>number of investments, fund name(s)/size(s), and investment preferences</strong>
+     (check size, stage, geography, technology) — with supporting quotes.</p>
+  <div class="meta">
+    <div><span class="lbl">Programs</span> <code>cv_analyzer.py</code> → <code>_extract_investment_and_funds()</code></div>
+    <div><span class="lbl">Output</span> <code>investment_and_funds</code> block added to <code>analysis.json</code>.</div>
+  </div>
+</div>
+
+<!-- ───────────────────────────── STEP 10 ───────────────────────────── -->
+<div class="step">
+  <span class="num">10</span><h3>Persist the analysis</h3>
+  <p>All of the above is assembled and written as the single structured record for the company.</p>
+  <div class="meta">
+    <div><span class="lbl">Programs</span> <code>cv_analyzer.analyze_company()</code></div>
+    <div><span class="lbl out">Creates</span> <code>outputs_v2/&lt;TICKER&gt;/analysis.json</code> — scores, ranks, P×O matrix, evidence sentences, <code>ensemble</code>, <code>score_uncertainty</code>, <code>investment_and_funds</code>, <code>investment_entities</code>, <code>financials</code>, <code>scraped_evidence_used</code>.</div>
+  </div>
+</div>
+
+<!-- ───────────────────────────── STEP 11 ───────────────────────────── -->
+<div class="step">
+  <span class="num">11</span><h3>Per-company visuals + ensemble report</h3>
+  <p>Render the per-company charts. Two dashboard variants are produced when ensemble data is present.</p>
+  <div class="meta">
+    <div><span class="lbl">Programs</span> <code>cv_visualizer.py</code> → <code>generate_all_company_visuals()</code> (P×O heatmap, dashboards, optional word clouds) · <code>ensemble_report.py</code> (table + error-bar figure)</div>
+    <div><span class="lbl">Commands</span> <code>python cv_toolkit.py charts</code> · <code>python ensemble_report.py outputs_v2/&lt;TICKER&gt;</code> · <code>report</code> for the .docx</div>
+    <div><span class="lbl out">Creates</span>
+      <code>dashboard.png</code> (plain) · <code>dashboard_uncertainty.png</code> (min–max error bars) ·
+      <code>practice_x_objective_heatmap.png</code> ·
+      <code>ensemble_scores.png</code> + <code>ensemble_scores_table.csv/.md</code> ·
+      <code>&lt;TICKER&gt;_report.docx</code> · <code>word_clouds/</code> (only if <code>--word-clouds</code>)</div>
+  </div>
+</div>
+
+<!-- ───────────────────────────── STEP 12 ───────────────────────────── -->
+<div class="step">
+  <span class="num">12</span><h3>Portfolio aggregation</h3>
+  <p>Flatten every company's <code>analysis.json</code> into one table, then build the cross-company analytics
+     and the self-contained interactive dashboard.</p>
+  <div class="meta">
+    <div><span class="lbl">Programs</span> <code>cv_report.py</code> → <code>build_summary_row()</code> / <code>build_master_csv()</code> · <code>cv_portfolio.py</code> → <code>run_portfolio_analysis()</code> · <code>cv_visualizer.py</code> (portfolio heatmaps)</div>
+    <div><span class="lbl">Commands</span> <code>python cv_toolkit.py csv</code> &nbsp;then&nbsp; <code>portfolio-report</code></div>
+    <div><span class="lbl out">Creates</span> <code>outputs_v2/master_dataframe.csv</code> · <code>outputs_v2/portfolio_dashboard.html</code> (zero-CDN) · <code>outputs_v2/portfolio_report.docx</code> · <code>outputs_v2/portfolio_charts/</code></div>
+  </div>
+</div>
+
+<!-- ───────────────────────────── DIMENSIONS ───────────────────────────── -->
+<h2>The 15-dimension framework</h2>
+<div class="card">
+  <table>
+    <tr><th>4 Practices</th><th>4 Activities</th><th>7 Objectives</th></tr>
+    <tr>
+      <td>Corporate Venture Capital · Accelerators and Incubators · Venture Building · Venture Clienting</td>
+      <td>Mentorship · Business Services · Workspace · Events</td>
+      <td>Risk Management · Market Expansion · Access to New Technology · Develop Business Ecosystems · Social and Environmental Impact · Developing Entrepreneurial Culture and Capabilities · Financial Return</td>
+    </tr>
+  </table>
+  <p class="small">Each dimension scores 0–100 (emphasis). Rubrics are <em>conceptual guides</em>, not vocabulary
+  checklists — the model scores the underlying activity regardless of wording. <code>framework/</code> holds
+  detailed v1 definitions; <code>framework_v2/</code> holds broader v1-paragraph definitions used by
+  <code>run_batch_v2.sh</code>.</p>
+</div>
+
+<!-- ───────────────────────────── SCORING MECHANICS ───────────────────────────── -->
+<h2>How scores are computed — LLM vs. coded algorithms</h2>
+
+<div class="note"><strong>Key point:</strong> the LLM produces the 0–100 judgments; Python does the
+orchestration, aggregation, ranking, and the matrix fallback. There is <strong>no</strong>
+statistical/regression model mapping features → scores, and RAG/BM25 never scores anything (it only
+retrieves passages for entity discovery, Step 4).</div>
+
+<h3>A · Each dimension's emphasis score (0–100)</h3>
+<div class="card">
+<p>An <strong>LLM judgment</strong>, aggregated by code:</p>
+<ol>
+  <li><strong>Assemble (code)</strong> — <code>_scoring_prompt()</code> packs, per dimension, the extracted
+      evidence (verbatim sentences, key terms, financial figures), the rubric (scoring bands + brief
+      description), and company context into one prompt.</li>
+  <li><strong>Score (LLM)</strong> — Claude (<code>temperature=0</code>) returns per dimension an
+      <code>emphasis_score</code> 0–100 (+ rank, description, top_quote, rubric_band, rationale). The number is
+      the model's holistic judgment, anchored by explicit rubric bands: <strong>20–39</strong> incidental ·
+      <strong>40–59</strong> generic/enterprise-scale · <strong>60–79</strong> explicit/named/quantified ·
+      <strong>80–100</strong> comprehensive/strategic with metrics. No arithmetic maps evidence → score.</li>
+  <li><strong>Ensemble (code)</strong> — the scoring call runs <strong>N times</strong> (default 5);
+      <code>_aggregate_ensemble()</code> reports the per-dimension <strong>median</strong>
+      (<code>statistics.median</code>) with min/max/std as uncertainty.</li>
+  <li><strong>Rank (code)</strong> — recomputed by <strong>sorting</strong> median scores within each group
+      (practices 1–4, activities 1–4, objectives 1–7) — not taken from the LLM.</li>
+  <li><strong>Total (code)</strong> — headline = median of the per-pass totals; <code>sum_of_medians</code>
+      also stored.</li>
+</ol>
+</div>
+
+<h3>B · Practice/Activity → Objective heatmap (P×O matrix)</h3>
+<div class="card">
+<p>A <strong>hybrid</strong>: LLM-judged cells where evidence is strong, deterministic theoretical alignment
+   everywhere else.</p>
+<ol>
+  <li><strong>LLM cells</strong> — the scoring call also returns <code>practice_x_objective_matrix</code>
+      (8 practice/activity rows × 7 objectives, 0–100) = "how strongly each row <em>serves</em> each
+      objective." The model typically fills only rows with strong evidence; ensemble medians these cells.</li>
+  <li><strong>Code fallback fill</strong> (<code>cv_analyzer.py</code>) — any row the LLM left empty/zero is
+      filled from the rubric's fixed <code>cross_objective_relevance</code> map
+      (<code>high/medium/low/none</code> → <code>70/40/20/0</code>), <strong>scaled by the dimension's
+      emphasis score</strong>:
+      <pre><code>scale = 0.25 + 0.75 × (emphasis_score / 100)
+cell  = relevance_number × scale</code></pre>
+      So a 0-scored dimension still shows its theoretical alignment at 25% intensity; an 80-scored one at ~85%.
+      <strong>Rows the LLM scored keep the LLM values</strong>; the rest get this computation.</li>
+</ol>
+<p class="small">The <code>cross_objective_relevance</code> map is authored by the LLM <em>once</em> when
+   rubrics are built (<code>cv_framework.py</code>), then frozen in <code>rubrics.json</code> and applied
+   deterministically at scoring time.</p>
+</div>
+
+<h3>C · Division of labour</h3>
+<div class="card">
+<table>
+  <tr><th>LLM (Claude, temperature=0)</th><th>Coded algorithms (Python, deterministic)</th></tr>
+  <tr><td>Evidence extraction — which sentences support each dimension (windowed passes)</td>
+      <td>Document fetch / SGML-HTML parsing / section extraction (regex)</td></tr>
+  <tr><td><strong>Dimension scores (0–100)</strong> — the core judgment</td>
+      <td>Windowing — tiling text into overlapping blocks (<code>_window_text</code>)</td></tr>
+  <tr><td>P×O matrix cells it chooses to fill</td>
+      <td>BM25 + cosine retrieval — <strong>entity discovery only</strong> (<code>cv_rag</code>)</td></tr>
+  <tr><td>Descriptions, top quotes, rationales; <code>investment_and_funds</code> synthesis; entity refinement</td>
+      <td>Evidence merge/dedup across windows; <strong>ensemble aggregation</strong> (median/std)</td></tr>
+  <tr><td>Rubric authoring — bands, indicators, <code>cross_objective_relevance</code> (one-time)</td>
+      <td><strong>Ranks</strong> (sort), <strong>totals</strong> (median/sum), <strong>P×O fallback fill</strong></td></tr>
+  <tr><td></td><td>XBRL merge (authoritative financials), caching (md5), all charts (matplotlib)</td></tr>
+</table>
+<p class="small"><strong>Bottom line:</strong> scoring and P×O alignment-where-evidence-exists are LLM judgments;
+   aggregation (median across passes), ranking, totals, and the theoretical P×O fill for unscored rows are
+   deterministic code.</p>
+</div>
+
+<!-- ───────────────────────────── FILES TABLE ───────────────────────────── -->
+<h2>Final outputs &amp; files created</h2>
+<div class="card">
+<h3>Caches (built once, reused)</h3>
+<table>
+  <tr><th>Path</th><th>What</th></tr>
+  <tr><td><code>sec_cache/sec_filings.sqlite</code></td><td>Downloaded EDGAR filings (SGML), keyed by CIK + accession</td></tr>
+  <tr><td><code>.cv_cache/&lt;md5&gt;.txt</code></td><td>On-disk Claude response cache (exact reproducibility); rubric builds + every API call</td></tr>
+  <tr><td><code>outputs/&lt;TICKER&gt;_narrative.txt</code> · <code>_xbrl_financials.json</code></td><td>Preprocessed narrative + structured financials (shared by v1 &amp; v2)</td></tr>
+  <tr><td><code>outputs_v2/rubrics.json</code></td><td>Scoring rubrics (bands, indicators, brief descriptions)</td></tr>
+</table>
+
+<h3>Per company — <code>outputs_v2/&lt;TICKER&gt;/</code></h3>
+<table>
+  <tr><th>File</th><th>Contents</th></tr>
+  <tr><td><code>analysis.json</code></td><td><strong>The master record</strong>: scores, ranks, P×O matrix, evidence, <code>ensemble</code>, <code>score_uncertainty</code>, <code>investment_and_funds</code>, <code>investment_entities</code>, <code>financials</code>, <code>scraped_evidence_used</code></td></tr>
+  <tr><td><code>dashboard.png</code> / <code>dashboard_uncertainty.png</code></td><td>Per-company dashboard — plain, and with min–max ensemble error bars</td></tr>
+  <tr><td><code>practice_x_objective_heatmap.png</code></td><td>Practice/activity → objective alignment matrix</td></tr>
+  <tr><td><code>ensemble_scores.json</code> · <code>.png</code> · <code>_table.csv/.md</code></td><td>Ensemble samples, error-bar figure, and table</td></tr>
+  <tr><td><code>&lt;TICKER&gt;_report.docx</code></td><td>Narrative Word report</td></tr>
+  <tr><td><code>extraction_checkpoint.json</code></td><td>Cached merged evidence (resume aid)</td></tr>
+  <tr><td><code>word_clouds/</code></td><td>Per-dimension word clouds (only if <code>--word-clouds</code>)</td></tr>
+</table>
+
+<h3>Curated web (optional) — <code>scraped/&lt;TICKER&gt;/</code></h3>
+<table>
+  <tr><th>File</th><th>Contents</th></tr>
+  <tr><td><code>result.json</code></td><td>Sources checked, doc links, structured extraction, <code>cv_analyzer_input</code> block</td></tr>
+  <tr><td><code>&lt;TICKER&gt;_{CVC,Accelerator,Impact}.txt</code></td><td>Cleaned full text per source category (the merge input)</td></tr>
+</table>
+
+<h3>Portfolio — <code>outputs_v2/</code></h3>
+<table>
+  <tr><th>File</th><th>Contents</th></tr>
+  <tr><td><code>master_dataframe.csv</code></td><td>One row per company — all dimension scores, ranks, descriptions, financials</td></tr>
+  <tr><td><code>portfolio_dashboard.html</code></td><td>Self-contained (zero-CDN) interactive cross-company dashboard</td></tr>
+  <tr><td><code>portfolio_report.docx</code></td><td>Portfolio Word report (heatmaps, benchmarks, "what works")</td></tr>
+  <tr><td><code>portfolio_charts/</code></td><td>Portfolio heatmap, score distributions, aggregate P×O matrix</td></tr>
+</table>
+</div>
+
+<!-- ───────────────────────────── COMMANDS ───────────────────────────── -->
+<h2>Command quick reference</h2>
+<div class="card">
+<h3>Single company (full chain)</h3>
+<pre><code># 1) fetch + preprocess (Steps 1–2)
+python cv_toolkit.py preprocess --ticker GOOGL --output outputs
+
+# 2) [optional] scrape curated web (Step 6a)
+python cv_toolkit.py scrape --ticker GOOGL
+
+# 3) analyze: Steps 3–11 (windowed extraction, ensemble scoring, investment_and_funds, visuals)
+python cv_toolkit.py --output outputs_v2 --rubrics outputs_v2/rubrics.json --ensemble 5 \
+    analyze --ticker GOOGL --company "Alphabet Inc." \
+    --file outputs/GOOGL_narrative.txt --with-scraped --force
+
+# 4) ensemble table + figure (Step 11)
+python ensemble_report.py outputs_v2/GOOGL
+
+# 5) portfolio aggregation (Step 12)
+python cv_toolkit.py --output outputs_v2 --rubrics outputs_v2/rubrics.json csv
+python cv_toolkit.py --output outputs_v2 --rubrics outputs_v2/rubrics.json portfolio-report</code></pre>
+
+<h3>Whole portfolio (batch — runs Steps 1–12 for every company)</h3>
+<pre><code>bash run_batch_v2.sh --force                 # all companies, v2 framework → outputs_v2/
+bash run_batch_v2.sh --ticker GOOGL --force  # single company through the v2 batch</code></pre>
+
+<div class="tip"><strong>Key toggles (<code>cv_config.py</code> / CLI):</strong>
+  <code>ENSEMBLE_SCORING_N</code> (<code>--ensemble N</code>, 1 = off) ·
+  <code>GENERATE_WORD_CLOUDS</code> (<code>--word-clouds</code>, off by default) ·
+  <code>--with-scraped</code> (off by default) ·
+  <code>EXTRACT_WINDOW_CHARS</code> / <code>EXTRACT_OVERLAP_CHARS</code> ·
+  <code>ENABLE_PROMPT_CACHE</code> · pinned <code>CLAUDE_MODEL = claude-sonnet-4-5-20250929</code>.</div>
+
+<div class="note"><strong>Determinism:</strong> <code>temperature=0</code> is greedy but not bit-deterministic at the API
+  level. Exact reproducibility comes from the <code>.cv_cache</code> response cache; the ensemble (Step 8)
+  quantifies the residual scoring uncertainty as error bars.</div>
+</div>
+
+<!-- ───────────────────────────── FUTURE EXTENSIONS ───────────────────────────── -->
+<h2>Appendix — Future extensions (not implemented)</h2>
+
+<div class="note"><strong>Status:</strong> design sketch only — captured for future consideration. The current
+  pipeline scores via holistic LLM judgment (see "How scores are computed"). This appendix outlines an
+  optional <strong>hybrid "LLM-as-feature-extractor + transparent coded scoring"</strong> alternative.</div>
+
+<h3>Core idea — separate perception from judgment</h3>
+<div class="card">
+<p>Today the LLM both reads the evidence <em>and</em> emits the 0–100 number (the judgment is opaque).
+   The hybrid splits these:</p>
+<ul>
+  <li><strong>LLM = perception</strong> → extracts a few well-defined, bounded sub-signals per dimension.</li>
+  <li><strong>Code = judgment</strong> → a transparent formula maps those signals → 0–100 (auditable,
+      reproducible, tunable).</li>
+</ul>
+</div>
+
+<h3>Step 1 — LLM returns structured features, not a score</h3>
+<div class="card">
+<table>
+  <tr><th>Feature</th><th>Type</th><th>Meaning</th></tr>
+  <tr><td><code>directness</code></td><td>direct / indirect / none</td><td>activity explicitly described vs. inferred</td></tr>
+  <tr><td><code>specificity</code></td><td>named+quantified / named / generic / vague</td><td>named funds/programmes, $ figures present?</td></tr>
+  <tr><td><code>materiality</code></td><td>strategic / moderate / incidental</td><td>centrality/scale to the business</td></tr>
+  <tr><td><code>evidence_count</code></td><td>int (capped)</td><td># distinct supporting sentences</td></tr>
+  <tr><td><code>financials_present</code></td><td>bool / count</td><td>$ figures attached</td></tr>
+</table>
+<p class="small">Categorical buckets are far more stable across runs than a free 0–100 number → less ensemble noise.</p>
+</div>
+
+<h3>Step 2 — deterministic scoring function (weights in cv_config)</h3>
+<div class="card">
+<pre><code>score = BASE[directness]
+      + W_spec     * LEVEL[specificity]
+      + W_evidence * min(evidence_count, CAP)/CAP
+      + W_fin      * financials_present
+score = clamp(score, 0, 100)</code></pre>
+<p>Every score then <strong>decomposes traceably</strong>, e.g.
+   <code>CVC = 72 = direct(40) + named+quantified(20) + evidence 8/cap(8) + financials(4)</code>.</p>
+</div>
+
+<h3>Step 3 — blend knob (keeps current behaviour available)</h3>
+<div class="card">
+<pre><code>final = α · formula_score + (1 − α) · llm_holistic_score</code></pre>
+<p><code>α=1</code> → fully transparent/reproducible; <code>α=0</code> → today's behaviour; in between → hybrid.
+   Plus an optional LLM "override flag" for genuine edge cases the formula misses.</p>
+</div>
+
+<h3>Step 4 (optional) — calibrate the formula as an interpretable model</h3>
+<div class="card">
+<p>Replace hand-set weights with a small <strong>ordinal/linear model</strong> fit on a labelled sample
+   (human scores, or current LLM scores as a starting target). LLM features → interpretable coefficients →
+   score, making scoring a defensible, reportable model.</p>
+</div>
+
+<h3>P×O matrix analog</h3>
+<div class="card">
+<p>The fallback fill already does this (<code>relevance × emphasis-scale</code>). The hybrid would make the
+   <strong>whole</strong> matrix formula-based for consistency:
+   <code>cell = f(row emphasis, cross_objective_relevance, objective emphasis, evidence co-occurrence)</code> —
+   removing the "LLM cells vs. coded cells" split.</p>
+</div>
+
+<h3>Trade-offs</h3>
+<div class="card">
+<table>
+  <tr><th>Gains</th><th>Costs / risks</th></tr>
+  <tr><td>Full traceability (score → named contributions)</td><td>Must design + validate the feature set and weights</td></tr>
+  <tr><td>Reproducibility (deterministic formula; stable categorical features)</td><td>Features still come from the LLM (perception not eliminated)</td></tr>
+  <tr><td>Tunability / calibration against ground truth</td><td>A rigid formula can miss nuance — mitigated by the α blend</td></tr>
+  <tr><td>Comparability across companies (one scoring rule)</td><td>Extra LLM schema + a small validation harness</td></tr>
+</table>
+<p class="small"><strong>Footprint when implemented:</strong> new extraction schema, a
+  <code>score_from_features()</code> in <code>cv_analyzer</code>, weights in <code>cv_config</code>, keep the
+  current LLM-score path behind the α blend, and a harness comparing formula vs. LLM scores.</p>
+</div>
+
+</main>
+
+<footer>
+  Corporate Venturing Toolkit — Implementation Guide · generated 2026-06-05 · entry point <code>cv_toolkit.py</code>
+</footer>
+
+</body>
+</html>

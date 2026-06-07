@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Corporate Venturing Toolkit — Project Summary</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f0f4f8;
+      color: #1e293b;
+      line-height: 1.6;
+    }
+    header {
+      background: #1d4ed8;
+      color: #fff;
+      padding: 40px 48px 32px;
+    }
+    header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 6px; }
+    header p  { font-size: 1rem; opacity: 0.85; }
+    .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      border-radius: 20px;
+      padding: 3px 12px;
+      font-size: 0.82rem;
+      margin-top: 10px;
+      margin-right: 6px;
+    }
+    main { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── Section headings ── */
+    h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1d4ed8;
+      border-bottom: 2px solid #bfdbfe;
+      padding-bottom: 6px;
+      margin: 40px 0 18px;
+    }
+    h3 { font-size: 1rem; font-weight: 600; margin-bottom: 8px; }
+
+    /* ── Cards ── */
+    .card {
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 22px 24px;
+      margin-bottom: 16px;
+    }
+
+    /* ── Purpose grid ── */
+    .purpose-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
+    .purpose-item {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .purpose-item .icon { font-size: 1.6rem; margin-bottom: 6px; }
+    .purpose-item strong { display: block; margin-bottom: 4px; }
+    .purpose-item p { font-size: 0.88rem; color: #475569; }
+
+    /* ── Pipeline steps ── */
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      counter-reset: step;
+    }
+    .step {
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 16px 14px;
+      position: relative;
+      counter-increment: step;
+    }
+    .step::before {
+      content: counter(step);
+      position: absolute;
+      top: -12px;
+      left: 14px;
+      background: #1d4ed8;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .step h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 4px; color: #1d4ed8; }
+    .step p  { font-size: 0.8rem; color: #475569; }
+
+    /* ── Dimension framework ── */
+    .dim-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    @media (max-width: 700px) { .dim-grid { grid-template-columns: 1fr; } }
+    .dim-group { background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; }
+    .dim-header {
+      padding: 10px 14px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #fff;
+    }
+    .dim-header.practices  { background: #1d4ed8; }
+    .dim-header.activities { background: #0891b2; }
+    .dim-header.objectives { background: #7c3aed; }
+    .dim-body { padding: 12px 14px; }
+    .dim-body li {
+      font-size: 0.85rem;
+      padding: 4px 0;
+      border-bottom: 1px solid #f1f5f9;
+      list-style: none;
+    }
+    .dim-body li:last-child { border-bottom: none; }
+    .dim-num {
+      display: inline-block;
+      width: 20px;
+      font-weight: 600;
+      color: #94a3b8;
+      font-size: 0.75rem;
+    }
+
+    /* ── Score table ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+    thead th {
+      background: #1e293b;
+      color: #fff;
+      padding: 10px 12px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+    tbody tr:nth-child(even) { background: #f8fafc; }
+    tbody td { padding: 9px 12px; border-bottom: 1px solid #e2e8f0; }
+    .score-bar-cell { min-width: 140px; }
+    .score-bar-wrap { display: flex; align-items: center; gap: 8px; }
+    .score-bar-bg {
+      flex: 1;
+      background: #e2e8f0;
+      border-radius: 4px;
+      height: 8px;
+      overflow: hidden;
+    }
+    .score-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: #1d4ed8;
+    }
+    .score-num { font-weight: 600; font-size: 0.82rem; color: #1e293b; white-space: nowrap; }
+    .tier-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 12px;
+      white-space: nowrap;
+    }
+    .t1 { background: #dcfce7; color: #166534; }
+    .t2 { background: #dbeafe; color: #1e40af; }
+    .t3 { background: #fef9c3; color: #854d0e; }
+    .t4 { background: #fee2e2; color: #991b1b; }
+
+    /* ── Warning banner ── */
+    .warning {
+      background: #fef3c7;
+      border: 1px solid #fbbf24;
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-size: 0.9rem;
+      margin-bottom: 16px;
+    }
+    .warning strong { color: #92400e; }
+
+    /* ── Module table ── */
+    .module-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+    .module-table th {
+      text-align: left;
+      padding: 8px 12px;
+      background: #f1f5f9;
+      border-bottom: 2px solid #cbd5e1;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+    .module-table td { padding: 8px 12px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+    .module-table td:first-child { font-family: monospace; font-size: 0.82rem; color: #1d4ed8; white-space: nowrap; }
+
+    /* ── Fixes list ── */
+    .fixes { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap: 12px; }
+    .fix-item {
+      background: #fff;
+      border-left: 4px solid #1d4ed8;
+      border-radius: 0 8px 8px 0;
+      padding: 12px 14px;
+      font-size: 0.86rem;
+    }
+    .fix-item .fx-title { font-weight: 700; margin-bottom: 4px; }
+    .fix-item .fx-desc { color: #475569; }
+
+    /* ── Next steps ── */
+    .next-steps ol { padding-left: 20px; }
+    .next-steps li { margin-bottom: 10px; font-size: 0.9rem; }
+    .next-steps li strong { color: #1d4ed8; }
+    code {
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-family: monospace;
+      font-size: 0.85em;
+    }
+    pre {
+      background: #1e293b;
+      color: #e2e8f0;
+      border-radius: 8px;
+      padding: 16px 18px;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin: 10px 0;
+    }
+
+    /* ── Output files ── */
+    .output-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .output-item {
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 14px;
+    }
+    .output-item .otype {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #7c3aed;
+      margin-bottom: 4px;
+    }
+    .output-item .opath {
+      font-family: monospace;
+      font-size: 0.82rem;
+      color: #1d4ed8;
+      word-break: break-all;
+    }
+    .output-item .odesc {
+      font-size: 0.8rem;
+      color: #64748b;
+      margin-top: 4px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 0.8rem;
+      color: #94a3b8;
+      border-top: 1px solid #e2e8f0;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+<style>
+  .pdf-btn { position: fixed; top: 16px; right: 16px; z-index: 1000;
+    background: #1d4ed8; color: #fff; border: none; border-radius: 8px;
+    padding: 8px 14px; font-size: .85rem; font-weight: 600; cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,.25); }
+  .pdf-btn:hover { background: #1e40af; }
+  @media print { .no-print { display: none !important; } }
+</style>
+<button class="pdf-btn no-print" onclick="window.print()"
+        title="Save this page as PDF — choose 'Save as PDF' in the print dialog">⤓ Download PDF</button>
+
+<header>
+  <h1>Corporate Venturing Research Toolkit</h1>
+  <p>AI-powered analysis of corporate venturing practices from 10-K filings using the Anthropic Claude API</p>
+  <div style="margin-top:12px">
+    <span class="badge">6 Companies</span>
+    <span class="badge">15 Dimensions</span>
+    <span class="badge">Windowed Extraction</span>
+    <span class="badge">Ensemble Scoring (median + uncertainty)</span>
+    <span class="badge">Claude Sonnet 4.5 (pinned 20250929)</span>
+    <span class="badge">Python / conda cv_env</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <h2>Project Purpose</h2>
+  <div class="purpose-grid">
+    <div class="purpose-item">
+      <div class="icon">📄</div>
+      <strong>Input</strong>
+      <p>Raw EDGAR 10-K filings (SGML / HTML) for S&P 500 companies</p>
+    </div>
+    <div class="purpose-item">
+      <div class="icon">🔍</div>
+      <strong>Analysis</strong>
+      <p>RAG extraction + Claude API scoring across 15 venturing dimensions</p>
+    </div>
+    <div class="purpose-item">
+      <div class="icon">📊</div>
+      <strong>Outputs</strong>
+      <p>Master CSV, per-company dashboards &amp; reports, portfolio HTML dashboard</p>
+    </div>
+    <div class="purpose-item">
+      <div class="icon">🎯</div>
+      <strong>Research Goal</strong>
+      <p>Understand which venturing practices companies use and what corporate objectives they serve</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <h2>Analysis Pipeline</h2>
+  <div class="pipeline">
+    <div class="step">
+      <h4>Preprocess</h4>
+      <p>Use the complete extracted narrative — <strong>all of Items 1/1A/2/7/8 including financial statements &amp; footnotes</strong>. Already-clean narratives are used as-is (no lossy re-preprocessing). Fetch XBRL structured financials.</p>
+    </div>
+    <div class="step">
+      <h4>Entity Discovery</h4>
+      <p>Curated CVC fund names from <code>company_context.json</code> + BM25/cosine index lookup + Claude refinement. The RAG index is used <em>only</em> for entity discovery — <strong>not</strong> for the scored evidence.</p>
+    </div>
+    <div class="step">
+      <h4>Windowed Extraction</h4>
+      <p>Tile the <strong>entire</strong> narrative into <strong>overlapping 60K-char windows (6K overlap)</strong> and scan <strong>every window for all 15 dimensions</strong>. Nothing is truncated; evidence merged + deduped across windows. Comprehensive LLM extraction (not cosine matching).</p>
+    </div>
+    <div class="step">
+      <h4>Ensemble Scoring</h4>
+      <p><strong>5 independent scoring passes</strong> on the same evidence (<code>temperature=0</code>). Report the <strong>per-dimension median</strong> with min/max/std <strong>uncertainty</strong>. Distinct cache slots → fresh samples, reproducible reruns.</p>
+    </div>
+    <div class="step">
+      <h4>Financials + XBRL</h4>
+      <p>Claude extracts revenue, R&amp;D, margins, CVC totals; authoritative <strong>XBRL</strong> values overlay all standard GAAP metrics.</p>
+    </div>
+    <div class="step">
+      <h4>Caching</h4>
+      <p>Server-side <strong>prompt caching</strong> on the shared prompt prefix (esp. the ensemble passes) + on-disk response cache for exact reproducibility. Pinned model snapshot <code>claude-sonnet-4-5-20250929</code>.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <h2>Dimension Framework (15 Dimensions)</h2>
+  <div class="dim-grid">
+    <div class="dim-group">
+      <div class="dim-header practices">4 Practices</div>
+      <ul class="dim-body">
+        <li><span class="dim-num">P1</span> Corporate Venture Capital</li>
+        <li><span class="dim-num">P2</span> Accelerators &amp; Incubators</li>
+        <li><span class="dim-num">P3</span> Venture Building</li>
+        <li><span class="dim-num">P4</span> Venture Clienting</li>
+      </ul>
+    </div>
+    <div class="dim-group">
+      <div class="dim-header activities">4 Activities</div>
+      <ul class="dim-body">
+        <li><span class="dim-num">A1</span> Mentorship</li>
+        <li><span class="dim-num">A2</span> Business Services</li>
+        <li><span class="dim-num">A3</span> Workspace</li>
+        <li><span class="dim-num">A4</span> Events</li>
+      </ul>
+    </div>
+    <div class="dim-group">
+      <div class="dim-header objectives">7 Objectives</div>
+      <ul class="dim-body">
+        <li><span class="dim-num">O1</span> Risk Management</li>
+        <li><span class="dim-num">O2</span> Market Expansion</li>
+        <li><span class="dim-num">O3</span> Access to New Technology</li>
+        <li><span class="dim-num">O4</span> Develop Business Ecosystems</li>
+        <li><span class="dim-num">O5</span> Social &amp; Environmental Impact</li>
+        <li><span class="dim-num">O6</span> Entrepreneurial Culture &amp; Capabilities</li>
+        <li><span class="dim-num">O7</span> Financial Return</li>
+      </ul>
+    </div>
+  </div>
+  <p style="font-size:0.84rem;color:#64748b;margin-top:10px">
+    Scores are 0–100 per dimension. Max total = 1500. A Practice × Objective alignment matrix (15×7) is also produced for each company showing which practices serve which objectives.
+  </p>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <h2>Current Results (6 Companies) — canonical: windowed + ensemble + curated web (2026-06-05)</h2>
+
+  <div class="warning" style="background:#ecfdf5;border-color:#a7f3d0">
+    <strong>Final canonical run.</strong> Full-document windowed extraction + 5-pass ensemble scoring
+    (<code>temperature=0</code>, pinned model <code>claude-sonnet-4-5-20250929</code>) with
+    <strong>curated-web evidence merged for all six</strong> (<code>--with-scraped</code>). <strong>Total =
+    median of 5 per-pass totals</strong>; the bracketed range is the observed min–max across passes (also the
+    error bars on each company's <code>dashboard_uncertainty.png</code>). Every company additionally carries an
+    <code>investment_and_funds</code> field (fund sizes + investment preferences). Portfolio average:
+    <strong>1024 / 1500</strong>.
+  </div>
+
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>Ticker</th>
+          <th>Company</th>
+          <th>Total (median)</th>
+          <th>Range</th>
+          <th>% of 1500</th>
+          <th>Tier</th>
+          <th>Top Practice</th>
+          <th>Top Objective</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>AMZN</strong></td>
+          <td>Amazon.com Inc.</td>
+          <td class="score-bar-cell">
+            <div class="score-bar-wrap">
+              <div class="score-bar-bg"><div class="score-bar-fill" style="width:78%"></div></div>
+              <span class="score-num">1172</span>
+            </div>
+          </td>
+          <td>1136–1225</td>
+          <td>78%</td>
+          <td><span class="tier-badge t1">Tier 1</span></td>
+          <td>Corporate Venture Capital (92)</td>
+          <td>Develop Business Ecosystems (95)</td>
+        </tr>
+        <tr>
+          <td><strong>GOOGL</strong></td>
+          <td>Alphabet Inc.</td>
+          <td class="score-bar-cell">
+            <div class="score-bar-wrap">
+              <div class="score-bar-bg"><div class="score-bar-fill" style="width:77%"></div></div>
+              <span class="score-num">1153</span>
+            </div>
+          </td>
+          <td>1089–1175</td>
+          <td>77%</td>
+          <td><span class="tier-badge t1">Tier 1</span></td>
+          <td>Venture Building (95)</td>
+          <td>Access to New Technology (96)</td>
+        </tr>
+        <tr>
+          <td><strong>MSFT</strong></td>
+          <td>Microsoft Corporation</td>
+          <td class="score-bar-cell">
+            <div class="score-bar-wrap">
+              <div class="score-bar-bg"><div class="score-bar-fill" style="width:71%"></div></div>
+              <span class="score-num">1064</span>
+            </div>
+          </td>
+          <td>1003–1076</td>
+          <td>71%</td>
+          <td><span class="tier-badge t1">Tier 1</span></td>
+          <td>Venture Building (85)</td>
+          <td>Access to New Technology (92)</td>
+        </tr>
+        <tr>
+          <td><strong>CSCO</strong></td>
+          <td>Cisco Systems Inc.</td>
+          <td class="score-bar-cell">
+            <div class="score-bar-wrap">
+              <div class="score-bar-bg"><div class="score-bar-fill" style="width:65%"></div></div>
+              <span class="score-num">974</span>
+            </div>
+          </td>
+          <td>933–990</td>
+          <td>65%</td>
+          <td><span class="tier-badge t1">Tier 1</span></td>
+          <td>Accelerators and Incubators (82)</td>
+          <td>Access to New Technology (88)</td>
+        </tr>
+        <tr>
+          <td><strong>QCOM</strong></td>
+          <td>Qualcomm Inc.</td>
+          <td class="score-bar-cell">
+            <div class="score-bar-wrap">
+              <div class="score-bar-bg"><div class="score-bar-fill" style="width:63%"></div></div>
+              <span class="score-num">946</span>
+            </div>
+          </td>
+          <td>835–972</td>
+          <td>63%</td>
+          <td><span class="tier-badge t1">Tier 1</span></td>
+          <td>Corporate Venture Capital (92)</td>
+          <td>Market Expansion (88)</td>
+        </tr>
+        <tr>
+          <td><strong>MRK</strong></td>
+          <td>Merck &amp; Co. Inc.</td>
+          <td class="score-bar-cell">
+            <div class="score-bar-wrap">
+              <div class="score-bar-bg"><div class="score-bar-fill" style="width:56%"></div></div>
+              <span class="score-num">837</span>
+            </div>
+          </td>
+          <td>815–842</td>
+          <td>56%</td>
+          <td><span class="tier-badge t1">Tier 1</span></td>
+          <td>Corporate Venture Capital (85)</td>
+          <td>Access to New Technology (82)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:0.84rem;color:#64748b">
+    <strong>Key cross-portfolio findings (curated-web augmented):</strong> all six are now <strong>Tier 1</strong>
+    once curated CVC/accelerator/impact evidence is merged. <strong>Access to New Technology</strong> is the
+    dominant objective for 4 of 6; <strong>Corporate Venture Capital</strong> is the most common top practice,
+    while the two largest tech players (GOOGL, MSFT) are led by <strong>Venture Building</strong> and Cisco by
+    <strong>Accelerators &amp; Incubators</strong>. Sample fund detail captured in <code>investment_and_funds</code>:
+    Qualcomm Ventures $2B+ AUM / $3B+ deployed, Amazon Climate Pledge Fund $2B + Industrial Innovation Fund $1B,
+    Merck MRL Ventures $500M, Cisco $1B Global AI Fund, Microsoft Climate Innovation Fund $1B.
+  </p>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <h2>Module Architecture</h2>
+  <div class="card">
+    <table class="module-table">
+      <thead>
+        <tr><th>File</th><th>Role</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>cv_config.py</td><td>Single source of truth — all dimension lists, colors, thresholds, file paths, model names</td></tr>
+        <tr><td>cv_toolkit.py</td><td>CLI entry point — all subcommands (rubrics, describe, preprocess, analyze, csv, charts, report, portfolio-report)</td></tr>
+        <tr><td>cv_analyzer.py</td><td>Core pipeline — SGML extraction, financial window selection, 15 extraction calls, scoring call, checkpoint/resume</td></tr>
+        <tr><td>cv_rag.py</td><td>BM25 + embedding hybrid index; investment entity discovery; enriched CVC query building</td></tr>
+        <tr><td>cv_framework.py</td><td>Builds rubrics from framework/*.txt definitions; adds brief_descriptions via Haiku</td></tr>
+        <tr><td>cv_visualizer.py</td><td>Per-company PNGs: P×O heatmap, dashboard (bars + matrix + financials), word clouds</td></tr>
+        <tr><td>cv_portfolio.py</td><td>Portfolio heatmap, mean scores, What Works analysis, interactive HTML dashboard, portfolio.docx</td></tr>
+        <tr><td>cv_report.py</td><td>Per-company .docx report; build_summary_row() for CSV flattening</td></tr>
+        <tr><td>company_context.json</td><td>Curated CVC fund names, portfolio companies, dimension hints per ticker — injected into prompts</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <h2>Key Problems Solved</h2>
+  <div class="fixes">
+    <div class="fix-item">
+      <div class="fx-title">Narrative duplicated ~2× (preprocess)</div>
+      <div class="fx-desc">Step 2 sliced every narrative item all the way to Item 8, emitting Items 1A/2/7 multiple times (GOOGL: 253K → 514K). Fixed to slice each item to the <em>next</em> boundary; already-clean narratives are now used as-is.</div>
+    </div>
+    <div class="fix-item">
+      <div class="fx-title">Item 8 footnotes never scanned</div>
+      <div class="fx-desc">Old Call 1 capped at 70K chars and loaded Item 1 + 7 first, so Item 1A (84K) and Item 8 (96K, incl. equity-securities footnotes) were never read for most dimensions. Replaced with overlapping-window scan of the <strong>entire</strong> document.</div>
+    </div>
+    <div class="fix-item">
+      <div class="fx-title">temperature=0 ≠ reproducible</div>
+      <div class="fx-desc">API is greedy but not bit-deterministic. Windowed extraction cut per-dim drift ~20.7 → 8.5 pts; <strong>ensemble scoring</strong> reports medians with error bars; model pinned to <code>20250929</code>; response cache gives exact reruns.</div>
+    </div>
+    <div class="fix-item">
+      <div class="fx-title">Non-deterministic key_terms ordering</div>
+      <div class="fx-desc">Scoring used <code>list(set(...))</code> (hash-order varies per run). Switched to <code>dict.fromkeys</code> for stable, reproducible ordering.</div>
+    </div>
+    <div class="fix-item">
+      <div class="fx-title">API cost &amp; secrets</div>
+      <div class="fx-desc">Word clouds OFF by default (omit <code>word_cloud_text</code> from scoring); prompt caching on the shared prefix; <code>ANTHROPIC_API_KEY</code> loaded from git-ignored <code>.env</code>.</div>
+    </div>
+    <div class="fix-item">
+      <div class="fx-title">OOM / zsh: killed (SGML parsing)</div>
+      <div class="fx-desc">DOTALL regex on 500K single-line SGML caused catastrophic backtracking. Fixed with plain <code>.find()</code> string search and capped tag-stripping regex <code>&lt;[^&gt;]{1,300}&gt;</code>.</div>
+    </div>
+    <div class="fix-item">
+      <div class="fx-title">Activities always scoring 0</div>
+      <div class="fx-desc">ACTIVITIES not imported; missing from all_dims list; retrieve_evidence() only searched practices/objectives; scoring aggregation not initialised. All four bugs fixed.</div>
+    </div>
+    <div class="fix-item">
+      <div class="fx-title">Claude hallucinating dimension names</div>
+      <div class="fx-desc">Scoring prompt said "all 8 practices" — Claude invented "Corporate Innovation Labs", "Strategic M&A". Fixed with explicit 15-dimension list template in _scoring_prompt().</div>
+    </div>
+    <div class="fix-item">
+      <div class="fx-title">MSFT/CSCO financials all null</div>
+      <div class="fx-desc">Revenue at position 147K but code only sampled first 40K chars. Fixed with _best_financial_window() scanning overlapping 50K windows and picking highest number density.</div>
+    </div>
+    <div class="fix-item">
+      <div class="fx-title">GV / M12 / M Ventures not found</div>
+      <div class="fx-desc">Named funds not in EDGAR files (10-K text truncated at download). Fixed with company_context.json curated fund names injected directly into Claude extraction prompts.</div>
+    </div>
+    <div class="fix-item">
+      <div class="fx-title">company_context.json Stage 0 wiped</div>
+      <div class="fx-desc">Stage 1b code had <code>named_funds = set()</code> re-initialising the set after Stage 0 populated it. Removed the re-initialisation line.</div>
+    </div>
+    <div class="fix-item">
+      <div class="fx-title">"GV" filtered as noise</div>
+      <div class="fx-desc">Noise filter used <code>len(f) &gt; 2</code>, excluding 2-character names. Fixed to <code>len(f) &gt;= 2</code>.</div>
+    </div>
+    <div class="fix-item">
+      <div class="fx-title">HTML dashboard not loading</div>
+      <div class="fx-desc">Template used <code>`+data_json+`</code> (literal string not interpolation). Fixed to <code>{data_json}</code> inside Python f-string.</div>
+    </div>
+    <div class="fix-item">
+      <div class="fx-title">P×O heatmap title hidden</div>
+      <div class="fx-desc">fig.suptitle at y=0.99 overlapped top axis. Moved to y=1.00 and shifted subtitle to ax_top.set_title().</div>
+    </div>
+    <div class="fix-item">
+      <div class="fx-title">Dark theme visuals</div>
+      <div class="fx-desc">All dark-background constants replaced. Light theme: BG=#f0f4f8, PANEL=#ffffff, ACCENT=#1d4ed8 across cv_visualizer.py and cv_portfolio.py.</div>
+    </div>
+    <div class="fix-item">
+      <div class="fx-title">150K character cap on narrative</div>
+      <div class="fx-desc">Removed cap entirely — RAG handles full text efficiently (GOOGL: 150K → 550K chars). More text = better retrieval with same API call count.</div>
+    </div>
+    <div class="fix-item">
+      <div class="fx-title">AMZN low scores (non-standard language)</div>
+      <div class="fx-desc">Amazon's 10-K uses AWS/product language not standard venturing terms. Added dimension_hints to company_context.json to guide Claude interpretation. Needs re-run.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <h2>Output Files</h2>
+  <div class="output-grid">
+    <div class="output-item">
+      <div class="otype">Master CSV</div>
+      <div class="opath">outputs/master_dataframe.csv</div>
+      <div class="odesc">One row per company, 139 columns — all dimension scores, ranks, descriptions, financials</div>
+    </div>
+    <div class="output-item">
+      <div class="otype">HTML Dashboard</div>
+      <div class="opath">outputs/portfolio_dashboard.html</div>
+      <div class="odesc">Self-contained (zero CDN), instant-loading interactive portfolio view</div>
+    </div>
+    <div class="output-item">
+      <div class="otype">Portfolio Report</div>
+      <div class="opath">outputs/portfolio_report.docx</div>
+      <div class="odesc">11-section .docx with heatmaps, company snapshots, What Works, financial benchmarks</div>
+    </div>
+    <div class="output-item">
+      <div class="otype">Portfolio Charts</div>
+      <div class="opath">outputs/portfolio_charts/</div>
+      <div class="odesc">Score heatmap, mean scores, tier distribution, P×O alignment matrix PNGs</div>
+    </div>
+    <div class="output-item">
+      <div class="otype">Per-Company Analysis</div>
+      <div class="opath">outputs/&lt;TICKER&gt;/analysis.json</div>
+      <div class="odesc">Full structured analysis including investment_entities, scores, quotes, P×O matrix</div>
+    </div>
+    <div class="output-item">
+      <div class="otype">Per-Company Report</div>
+      <div class="opath">outputs/&lt;TICKER&gt;/&lt;TICKER&gt;_report.docx</div>
+      <div class="odesc">Individual company .docx with all dimension scores, evidence, financials, charts</div>
+    </div>
+    <div class="output-item">
+      <div class="otype">Per-Company Dashboard</div>
+      <div class="opath">outputs/&lt;TICKER&gt;/&lt;TICKER&gt;_dashboard.png</div>
+      <div class="odesc">3-panel bars (Practices/Activities/Objectives) + P×O matrix + financial snapshot</div>
+    </div>
+    <div class="output-item">
+      <div class="otype">Rubrics</div>
+      <div class="opath">outputs/rubrics.json</div>
+      <div class="odesc">Scoring bands, key indicators, brief_descriptions for all 15 dimensions</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <h2>Next Steps</h2>
+  <div class="card next-steps">
+    <ol>
+      <li>
+        <strong>v2 batch (windowed + ensemble) running for all 6 companies</strong> — full-document scan + 5-pass ensemble scoring:
+        <pre>conda activate cv_env
+bash run_batch_v2.sh --force</pre>
+        Produces median scores with uncertainty, plain + uncertainty dashboards, and <code>ensemble_scores.*</code> per company.
+      </li>
+      <li>
+        <strong>Reduce residual variance</strong> — the ensemble shows scoring is stable (practices ≈0 std); the dominant remaining run-to-run variance is <em>extraction</em>. Optionally ensemble/union the extraction windows too.
+      </li>
+      <li>
+        <strong>Tune cost vs recall</strong> — <code>EXTRACT_WINDOW_CHARS</code> / <code>ENSEMBLE_SCORING_N</code> in <code>cv_config.py</code> (or <code>--ensemble N</code>). Large filings (CSCO 780K → ~15 windows) dominate cost.
+      </li>
+      <li>
+        <strong>Scale to more companies</strong> — add entry to <code>company_context.json</code>, a row to <code>companies.csv</code>, and the ticker to <code>run_batch_v2.sh</code>, then re-run.
+      </li>
+    </ol>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <h2>Quick Command Reference</h2>
+  <div class="card">
+    <table class="module-table">
+      <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td>python cv_toolkit.py rubrics</td><td>Build scoring rubrics from framework/*.txt definitions (run once)</td></tr>
+        <tr><td>python cv_toolkit.py describe</td><td>Add plain-English brief_descriptions to each rubric via Haiku (run once)</td></tr>
+        <tr><td>python cv_toolkit.py preprocess --ticker X --file Y</td><td>Extract narrative + financials from raw EDGAR SGML</td></tr>
+        <tr><td>python cv_toolkit.py analyze --ticker X --file Y</td><td>Windowed extraction + ensemble scoring for one company</td></tr>
+        <tr><td>python cv_toolkit.py --ensemble N analyze ...</td><td>Override ensemble passes (N=1 disables; default 5)</td></tr>
+        <tr><td>python cv_toolkit.py --word-clouds analyze ...</td><td>Re-enable word clouds (OFF by default to save API)</td></tr>
+        <tr><td>bash run_batch_v2.sh --force</td><td>Full v2 batch (windowed + ensemble) for all companies</td></tr>
+        <tr><td>python ensemble_report.py outputs_v2/&lt;T&gt;</td><td>Build ensemble table (CSV/MD) + error-bar figure</td></tr>
+        <tr><td>python cv_toolkit.py scrape --ticker X</td><td>Scrape curated CVC/Accelerator/Impact URLs → scraped/&lt;X&gt;/result.json (optional)</td></tr>
+        <tr><td>python cv_toolkit.py analyze ... --with-scraped</td><td>Merge curated-web evidence (all 15 dims) into the 10-K evidence before scoring (off by default)</td></tr>
+        <tr><td>python cv_toolkit.py csv</td><td>Rebuild master_dataframe.csv from all analysis.json files</td></tr>
+        <tr><td>python cv_toolkit.py charts</td><td>Regenerate per-company PNGs (plain + uncertainty dashboards)</td></tr>
+        <tr><td>python cv_toolkit.py report</td><td>Generate .docx reports for all companies</td></tr>
+        <tr><td>python cv_toolkit.py portfolio-report</td><td>Heatmaps + HTML dashboard + portfolio.docx</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</main>
+
+<footer>
+  Corporate Venturing Research Toolkit &nbsp;·&nbsp; Updated 2026-06-05 (windowed + ensemble + curated-web canonical) &nbsp;·&nbsp; Built with Anthropic Claude API
+</footer>
+
+</body>
+</html>
