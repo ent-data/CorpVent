@@ -85,10 +85,48 @@
   .dim-desc { font-size: 0.82rem; color: var(--muted); margin-top: 6px; line-height: 1.4; }
   .dim-quote { color: #1d4ed8; font-style: italic; font-size: 0.8rem;
                 border-left: 2px solid var(--border); padding-left: 8px; margin-top: 8px; }
+  /* Dimension Detail — button list (left) + detail pane (right) */
+  .dim-detail-layout { display: flex; gap: 24px; align-items: flex-start; }
+  .dim-btn-panel { flex: 0 0 240px; display: flex; flex-direction: column; gap: 6px; }
+  /* --grp is set per group inline; falls back to neutral if absent */
+  .dim-btn-group-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+                          letter-spacing: .05em; color: var(--grp, var(--muted));
+                          margin: 14px 0 4px; padding-bottom: 3px;
+                          border-bottom: 2px solid var(--grp, var(--border));
+                          display: flex; align-items: center; gap: 7px; }
+  .dim-btn-group-label:first-child { margin-top: 0; }
+  .dim-btn-group-swatch { display: inline-block; width: 11px; height: 11px;
+                           border-radius: 3px; background: var(--grp, var(--muted)); }
+  .dim-btn { text-align: left; background: var(--panel); color: var(--text);
+              border: 1px solid var(--border); border-left: 3px solid var(--grp, transparent);
+              border-radius: 6px; padding: 9px 12px; font-size: 0.84rem; cursor: pointer;
+              transition: all .15s; font-family: inherit; }
+  .dim-btn:hover { border-color: var(--grp, var(--accent)); color: var(--grp, var(--accent));
+                    background: color-mix(in srgb, var(--grp, var(--accent)) 9%, var(--panel)); }
+  .dim-btn.active { background: var(--grp, var(--accent)); color: #fff;
+                     border-color: var(--grp, var(--accent)); font-weight: 600;
+                     box-shadow: inset 0 1px 3px rgba(0,0,0,.28); }
+  .dim-detail-pane { flex: 1; min-width: 0; }
+  .dim-detail-empty { padding: 44px 28px; text-align: center; border: 1.5px dashed var(--border);
+                       border-radius: 12px;
+                       background: linear-gradient(135deg,
+                         rgba(29,78,216,.06), rgba(8,145,178,.06), rgba(124,58,237,.06)); }
+  .dim-empty-icon { font-size: 2rem; margin-bottom: 10px; line-height: 1;
+                     background: linear-gradient(90deg,#1d4ed8,#0891b2,#7c3aed);
+                     -webkit-background-clip: text; background-clip: text;
+                     -webkit-text-fill-color: transparent; }
+  .dim-empty-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 5px;
+                      background: linear-gradient(90deg,#1d4ed8,#0891b2,#7c3aed);
+                      -webkit-background-clip: text; background-clip: text;
+                      -webkit-text-fill-color: transparent; }
+  .dim-empty-sub { font-size: 0.85rem; color: var(--muted); max-width: 400px;
+                    margin: 0 auto; line-height: 1.45; }
   @media (max-width: 768px) {
     .summary-cards { padding: 16px; }
     .tab-content { padding: 16px; }
     .tabs { padding: 0 16px; overflow-x: auto; }
+    .dim-detail-layout { flex-direction: column; }
+    .dim-btn-panel { flex-basis: auto; width: 100%; }
   }
 </style>
 </head>
@@ -175,12 +213,16 @@
 
 <div id="tab-dimdetail" class="tab-content">
   <div class="section-title">Dimension Detail</div>
-  <div style="margin-bottom:16px;">
-    <select id="dimSelect" onchange="renderDimDetail()">
-      <option value="">Select a dimension…</option>
-    </select>
+  <div class="dim-detail-layout">
+    <div id="dimBtnPanel" class="dim-btn-panel"></div>
+    <div id="dimDetailCards" class="dim-detail-pane">
+      <div class="dim-detail-empty">
+        <div class="dim-empty-icon">📊</div>
+        <div class="dim-empty-title">Choose a dimension</div>
+        <div class="dim-empty-sub">Pick a Program, Activity, or Objective on the left to see how the portfolio scores on it — company by company.</div>
+      </div>
+    </div>
   </div>
-  <div id="dimDetailCards"></div>
 </div>
 
 <script>
@@ -405,20 +447,42 @@ function renderFinancials() {
 }
 
 // ── Dimension Detail ──
-function populateDimSelect() {
-  const sel = document.getElementById('dimSelect');
-  [['Programs',D.practices],['Activities',D.activities],['Objectives',D.objectives]].forEach(([g,dims])=>{
-    const og = document.createElement('optgroup'); og.label = '── '+g+' ──';
-    dims.forEach(d=>{ const o=document.createElement('option'); o.value=d; o.textContent=d; og.appendChild(o); });
-    sel.appendChild(og);
-  });
+let activeDim = null;
+
+// Group colors match the composite mean-score chart (renderMeanScores).
+const DIM_GROUPS = [
+  ['Programs',   () => D.practices,  '#1d4ed8'],
+  ['Activities', () => D.activities, '#0891b2'],
+  ['Objectives', () => D.objectives, '#7c3aed'],
+];
+
+function populateDimButtons() {
+  const panel = document.getElementById('dimBtnPanel');
+  panel.innerHTML = DIM_GROUPS
+    .map(([g,dims,color]) =>
+      `<div class="dim-btn-group-label" style="--grp:${color}"><span class="dim-btn-group-swatch"></span>${g}</div>` +
+      dims().map(d => `<button type="button" class="dim-btn" style="--grp:${color}" data-dim="${d}" onclick="selectDim(this,'${d.replace(/'/g,"\\'")}')">${d}</button>`).join('')
+    ).join('');
+}
+
+const DIM_EMPTY_HTML = `
+  <div class="dim-detail-empty">
+    <div class="dim-empty-icon">📊</div>
+    <div class="dim-empty-title">Choose a dimension</div>
+    <div class="dim-empty-sub">Pick a Program, Activity, or Objective on the left to see how the portfolio scores on it — company by company.</div>
+  </div>`;
+
+function selectDim(btn, dim) {
+  activeDim = dim;
+  document.querySelectorAll('#dimBtnPanel .dim-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderDimDetail();
 }
 
 function renderDimDetail() {
-  const dim = document.getElementById('dimSelect').value;
   const wrap = document.getElementById('dimDetailCards');
-  if (!dim) { wrap.innerHTML=''; return; }
-  wrap.innerHTML = (D.dim_detail[dim]||[]).map(c => `
+  if (!activeDim) { wrap.innerHTML = DIM_EMPTY_HTML; return; }
+  wrap.innerHTML = (D.dim_detail[activeDim]||[]).map(c => `
     <div class="dim-detail-card">
       <div class="dim-ticker">${c.ticker}</div>
       <div class="dim-score">${c.score}<span style="font-size:.9rem;color:var(--muted)">/100</span></div>
@@ -434,7 +498,7 @@ renderMeanScores();
 renderRankings();
 renderWhatWorks();
 renderFinancials();
-populateDimSelect();
+populateDimButtons();
 </script>
 <footer style="text-align:center;padding:18px;color:#94a3b8;font-size:.8rem;border-top:1px solid #e2e8f0;margin-top:8px;">&copy; 2026 Sheryl Winston Smith &nbsp;&middot;&nbsp; Corporate Venturing Toolkit — Portfolio</footer>
 </body>
