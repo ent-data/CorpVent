@@ -247,7 +247,7 @@ function renderHeatmap() {
     const isP = i < nP, isA = i >= nP && i < nP+nA, isO = i >= nP+nA;
     const grpColor = isP ? groupColors.P : isA ? groupColors.A : groupColors.O;
     const borderLeft = (i === nP || i === nP+nA) ? `border-left:3px solid ${grpColor};padding-left:2px;` : '';
-    const grpLabel  = i === 0 ? 'PRACTICES' : i === nP ? 'ACTIVITIES' : i === nP+nA ? 'OBJECTIVES' : '';
+    const grpLabel  = i === 0 ? 'PROGRAMS' : i === nP ? 'ACTIVITIES' : i === nP+nA ? 'OBJECTIVES' : '';
     html += `<div style="min-width:${CELL_W}px;font-size:7.5px;font-weight:700;color:${grpColor};
              text-align:center;${borderLeft}">
       ${grpLabel ? `<div style="white-space:nowrap;">${grpLabel}</div>` : ''}
@@ -294,7 +294,7 @@ function renderHeatmap() {
     <span><span style="display:inline-block;width:14px;height:14px;background:#94a3b8;border-radius:3px;vertical-align:middle;"></span> 1–34 Limited</span>
     <span><span style="display:inline-block;width:14px;height:14px;background:#e2e8f0;border:1px solid #cbd5e1;border-radius:3px;vertical-align:middle;"></span> 0 None</span>
     &nbsp;|&nbsp;
-    <span style="color:#1d4ed8;font-weight:600;">P = Practices</span>
+    <span style="color:#1d4ed8;font-weight:600;">P = Programs</span>
     <span style="color:#7c3aed;font-weight:600;">A = Activities</span>
     <span style="color:#0f766e;font-weight:600;">O = Objectives</span>
   </div>`;
@@ -310,7 +310,7 @@ function renderMeanScores() {
     return col.reduce((a,b)=>a+b,0)/col.length;
   });
   const groups = [
-    {name:'Practices',  color:'#1d4ed8', start:0,  end:4},
+    {name:'Programs',   color:'#1d4ed8', start:0,  end:4},
     {name:'Activities', color:'#0891b2', start:4,  end:8},
     {name:'Objectives', color:'#7c3aed', start:8,  end:allDims.length},
   ];
@@ -407,7 +407,7 @@ function renderFinancials() {
 // ── Dimension Detail ──
 function populateDimSelect() {
   const sel = document.getElementById('dimSelect');
-  [['Practices',D.practices],['Activities',D.activities],['Objectives',D.objectives]].forEach(([g,dims])=>{
+  [['Programs',D.practices],['Activities',D.activities],['Objectives',D.objectives]].forEach(([g,dims])=>{
     const og = document.createElement('optgroup'); og.label = '── '+g+' ──';
     dims.forEach(d=>{ const o=document.createElement('option'); o.value=d; o.textContent=d; og.appendChild(o); });
     sel.appendChild(og);
