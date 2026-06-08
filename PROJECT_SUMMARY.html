@@ -63,7 +63,9 @@
       border-radius: 8px;
       padding: 16px;
     }
-    .purpose-item .icon { font-size: 1.6rem; margin-bottom: 6px; }
+    .purpose-item .icon { color: #1d4ed8; line-height: 0; height: 28px; margin-bottom: 8px; }
+    .purpose-item .icon svg { width: 28px; height: 28px; fill: none; stroke: currentColor;
+                              stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     .purpose-item strong { display: block; margin-bottom: 4px; }
     .purpose-item p { font-size: 0.88rem; color: #475569; }
 
@@ -309,22 +311,22 @@
   <h2>Project Purpose</h2>
   <div class="purpose-grid">
     <div class="purpose-item">
-      <div class="icon">📄</div>
+      <div class="icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg></div>
       <strong>Input</strong>
       <p>Raw EDGAR 10-K filings (SGML / HTML) for S&P 500 companies</p>
     </div>
     <div class="purpose-item">
-      <div class="icon">🔍</div>
+      <div class="icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
       <strong>Analysis</strong>
       <p>RAG extraction + Claude API scoring across 15 venturing dimensions</p>
     </div>
     <div class="purpose-item">
-      <div class="icon">📊</div>
+      <div class="icon"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
       <strong>Outputs</strong>
       <p>Master CSV, per-company dashboards &amp; reports, portfolio HTML dashboard</p>
     </div>
     <div class="purpose-item">
-      <div class="icon">🎯</div>
+      <div class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
       <strong>Research Goal</strong>
       <p>Understand which venturing practices companies use and what corporate objectives they serve</p>
     </div>
