@@ -73,12 +73,24 @@
   select, input { background: var(--panel); color: var(--text); border: 1px solid var(--border);
                   border-radius: 6px; padding: 8px 12px; font-size: 0.875rem; outline: none; }
   select:focus, input:focus { border-color: var(--accent); }
-  .ww-card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+  /* --wwc set per card = that objective's color (matches the overview bars) */
+  .ww-card { background: var(--panel); border: 1px solid var(--border);
+              border-left: 4px solid var(--wwc, var(--accent)); border-radius: 10px;
               padding: 18px; margin-bottom: 16px; }
   .ww-card h3 { color: var(--text); font-size: 0.95rem; margin-bottom: 8px; }
-  .ww-meta { color: var(--muted); font-size: 0.78rem; margin-bottom: 10px; }
-  .ww-quote { color: var(--muted); font-style: italic; font-size: 0.8rem;
-               border-left: 2px solid var(--accent); padding-left: 10px; margin-top: 6px; }
+  .ww-meta { color: var(--muted); font-size: 0.78rem; margin-bottom: 8px; }
+  .ww-scorebar { display: flex; align-items: center; gap: 10px; margin: 8px 0 12px; }
+  .ww-scorebar-track { flex: 1; max-width: 340px; height: 14px; background: var(--border);
+                        border-radius: 7px; overflow: hidden; }
+  .ww-scorebar-fill { height: 100%; border-radius: 7px; background: var(--wwc, var(--accent)); }
+  .ww-scorebar-val { font-size: 0.85rem; font-weight: 700; color: var(--wwc, var(--accent));
+                      min-width: 60px; }
+  .ww-quotes { background: color-mix(in srgb, var(--wwc, var(--accent)) 10%, var(--panel));
+                border: 1px solid color-mix(in srgb, var(--wwc, var(--accent)) 28%, var(--panel));
+                border-radius: 8px; padding: 8px 14px; margin-top: 8px; }
+  .ww-quote { color: var(--text); font-style: italic; font-size: 0.8rem; margin-top: 8px;
+               border-left: 2px solid var(--wwc, var(--accent)); padding-left: 10px; }
+  .ww-quote:first-child { margin-top: 0; }
   .dim-detail-card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
                        padding: 16px; margin-bottom: 12px; }
   .dim-score { font-size: 1.6rem; font-weight: 700; color: var(--accent); }
@@ -428,13 +440,19 @@ function renderWhatWorks() {
   }).join('');
   // Cards
   document.getElementById('ww-cards').innerHTML = D.ww_objectives.map((obj,i) => {
+    const color = OBJECTIVE_COLORS[i % OBJECTIVE_COLORS.length] || '#38bdf8';
+    const s = D.ww_avg_score[i];
+    const pct = Math.max(0, Math.min(100, s)).toFixed(0);
     const quotes = D.ww_quotes[i].map(q=>`<div class="ww-quote">"${q}"</div>`).join('');
-    return `<div class="ww-card">
+    return `<div class="ww-card" style="--wwc:${color}">
       <h3>${obj}</h3>
-      <div class="ww-meta">Top Practice: <strong style="color:var(--accent)">${D.ww_top_practice[i]}</strong>
-        &nbsp;·&nbsp; Avg Score: <strong>${D.ww_avg_score[i]}</strong>
+      <div class="ww-meta">Top Practice: <strong style="color:${color}">${D.ww_top_practice[i]}</strong>
         &nbsp;·&nbsp; Companies: ${D.ww_companies[i].join(', ')||'—'}</div>
-      ${quotes}</div>`;
+      <div class="ww-scorebar">
+        <div class="ww-scorebar-track"><div class="ww-scorebar-fill" style="width:${pct}%"></div></div>
+        <span class="ww-scorebar-val">${s} / 100</span>
+      </div>
+      ${quotes ? `<div class="ww-quotes">${quotes}</div>` : ''}</div>`;
   }).join('');
 }
 
