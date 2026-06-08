@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Corporate Venturing Toolkit — Reports</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231d4ed8'/%3E%3Crect x='6.5' y='17' width='4.5' height='8' rx='1.2' fill='%23ffffff'/%3E%3Crect x='13.75' y='12' width='4.5' height='13' rx='1.2' fill='%23bfdbfe'/%3E%3Crect x='21' y='7' width='4.5' height='18' rx='1.2' fill='%23ffffff'/%3E%3C/svg%3E">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -18,7 +19,9 @@
            background: #fff; border: 1px solid #cbd5e1; border-left: 6px solid #1d4ed8;
            border-radius: 12px; padding: 22px 24px; transition: box-shadow .15s, transform .15s; }
   a.card:hover { box-shadow: 0 6px 18px rgba(29,78,216,.15); transform: translateY(-2px); }
-  a.card .icon { font-size: 1.8rem; }
+  a.card .icon { color: #1d4ed8; line-height: 0; height: 30px; }
+  a.card .icon svg { width: 30px; height: 30px; fill: none; stroke: currentColor;
+                     stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   a.card h2 { font-size: 1.15rem; color: #1d4ed8; margin: 8px 0 4px; }
   a.card p { font-size: .9rem; color: #475569; }
   a.card .go { display: inline-block; margin-top: 12px; font-size: .85rem; font-weight: 700; color: #1d4ed8; }
@@ -33,31 +36,31 @@
 <main>
   <div class="grid">
     <a class="card" href="portfolio.html">
-      <div class="icon">📊</div>
+      <div class="icon"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
       <h2>Portfolio Dashboard</h2>
       <p>Interactive cross-company view — scores across 15 dimensions, P×O heatmaps, and financials for the 6 calibrated companies.</p>
       <span class="go">Open dashboard →</span>
     </a>
     <a class="card" href="PROJECT_SUMMARY.html">
-      <div class="icon">📋</div>
+      <div class="icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg></div>
       <h2>Project Summary</h2>
       <p>Current results, module architecture, key problems solved, and a command quick-reference.</p>
       <span class="go">Open summary →</span>
     </a>
     <a class="card" href="IMPLEMENTATION_GUIDE.html">
-      <div class="icon">📘</div>
+      <div class="icon"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
       <h2>Implementation Guide</h2>
       <p>Step-by-step pipeline (document identification → outputs), how scores are computed, and future extensions.</p>
       <span class="go">Open guide →</span>
     </a>
     <a class="card" href="overview.html">
-      <div class="icon">🏠</div>
+      <div class="icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
       <h2>Project Overview</h2>
       <p>Landing page — status, company results, analysis pipeline, tech stack, and key files.</p>
       <span class="go">Open overview →</span>
     </a>
     <a class="card" href="LLM_PROMPTS.html">
-      <div class="icon">💬</div>
+      <div class="icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
       <h2>LLM Prompts Reference</h2>
       <p>The actual Claude API prompts behind each step — labelled by purpose, with the Python-injected pieces highlighted in curly braces.</p>
       <span class="go">Open prompts →</span>
