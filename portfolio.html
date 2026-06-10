@@ -29,7 +29,17 @@
   .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
   .tab-content { display: none; padding: 28px 32px; }
   .tab-content.active { display: block; }
-  .section-title { font-size: 1rem; font-weight: 600; color: var(--accent); margin-bottom: 16px; }
+  .section-title { display: flex; align-items: center; gap: 10px; font-size: 1rem;
+                    font-weight: 600; color: var(--accent); margin-bottom: 16px; }
+  .copy-link-btn { margin-left: auto; display: inline-flex; align-items: center; gap: 5px;
+                    background: transparent; color: var(--accent); border: 1px solid var(--border);
+                    border-radius: 6px; padding: 4px 10px; font-size: 0.74rem; font-weight: 600;
+                    cursor: pointer; font-family: inherit; transition: all .15s; white-space: nowrap; }
+  .copy-link-btn:hover { border-color: var(--accent);
+                          background: color-mix(in srgb, var(--accent) 8%, var(--panel)); }
+  .copy-link-btn.copied { color: #15803d; border-color: #86efac; background: #f0fdf4; }
+  .copy-link-btn svg { width: 13px; height: 13px; fill: none; stroke: currentColor;
+                        stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   .chart-wrap { background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
                  padding: 20px; margin-bottom: 20px; }
   /* CSS heatmap grid */
@@ -304,6 +314,55 @@ function switchTab(id, fromURL) {
 
 window.addEventListener('hashchange', () => switchTab(resolveTabFromURL(), true));
 
+// ── Per-tab deep-link "Copy link" buttons ──
+const LINK_SVG = '<svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
+
+// Absolute, canonical pretty URL for a tab: <origin><root>/portfolio/<slug>/
+function canonicalURL(id) {
+  let root = location.pathname.replace(/\/index\.html$/, '');
+  root = prettySlug()
+    ? root.replace(/\/portfolio\/[^\/]+\/?$/, '/')   // on a pretty page → strip portfolio/<slug>/
+    : root.replace(/[^\/]*$/, '');                    // on portfolio.html → strip the filename
+  if (!root.endsWith('/')) root += '/';
+  return location.origin + root + 'portfolio/' + (TAB_SLUG[id] || id) + '/';
+}
+
+function copyTabLink(id, btn) {
+  const url = canonicalURL(id);
+  const span = btn.querySelector('span');
+  const flash = () => {
+    const prev = span.textContent;
+    span.textContent = 'Copied!'; btn.classList.add('copied');
+    setTimeout(() => { span.textContent = prev; btn.classList.remove('copied'); }, 1600);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(flash).catch(() => fallbackCopy(url, flash));
+  } else {
+    fallbackCopy(url, flash);
+  }
+}
+
+function fallbackCopy(text, done) {
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); done(); } catch (e) {}
+  document.body.removeChild(ta);
+}
+
+function installDeepLinks() {
+  TAB_ORDER.forEach(id => {
+    const title = document.querySelector('#tab-' + id + ' .section-title');
+    if (!title || title.querySelector('.copy-link-btn')) return;
+    const btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'copy-link-btn';
+    btn.title = 'Copy a direct link to this tab';
+    btn.innerHTML = LINK_SVG + '<span>Copy link</span>';
+    btn.addEventListener('click', () => copyTabLink(id, btn));
+    title.appendChild(btn);
+  });
+}
+
 // ── Summary cards ──
 function renderSummary() {
   document.getElementById('subtitle').textContent =
@@ -555,6 +614,7 @@ renderRankings();
 renderWhatWorks();
 renderFinancials();
 populateDimButtons();
+installDeepLinks();                      // add a "Copy link" button to each tab
 switchTab(resolveTabFromURL(), true);   // open the tab named in the URL (path or hash)
 </script>
 <footer style="text-align:center;padding:18px;color:#94a3b8;font-size:.8rem;border-top:1px solid #e2e8f0;margin-top:8px;">&copy; 2026 Sheryl Winston Smith &nbsp;&middot;&nbsp; Corporate Venturing Toolkit — Portfolio</footer>
