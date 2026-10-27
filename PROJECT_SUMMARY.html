@@ -14,7 +14,7 @@
       line-height: 1.6;
     }
     header {
-      background: #1d4ed8;
+      background: #011F5B;
       color: #fff;
       padding: 40px 48px 32px;
     }
@@ -357,7 +357,7 @@
     </div>
     <div class="step">
       <h4>Caching</h4>
-      <p>Server-side <strong>prompt caching</strong> on the shared prompt prefix (esp. the ensemble passes) + on-disk response cache for exact reproducibility. Pinned model snapshot <code>claude-sonnet-4-5-20250929</code>.</p>
+      <p>Server-side <strong>prompt caching</strong> on the shared prompt prefix (esp. the ensemble passes) + on-disk response cache for exact reproducibility. Pinned model snapshot <code>claude-sonnet-4-6</code>.</p>
     </div>
   </div>
 
@@ -404,7 +404,7 @@
 
   <div class="warning" style="background:#ecfdf5;border-color:#a7f3d0">
     <strong>Final canonical run.</strong> Full-document windowed extraction + 5-pass ensemble scoring
-    (<code>temperature=0</code>, pinned model <code>claude-sonnet-4-5-20250929</code>) with
+    (<code>temperature=0</code>, pinned model <code>claude-sonnet-4-6</code>) with
     <strong>curated-web evidence merged for all six</strong> (<code>--with-scraped</code>). <strong>Total =
     median of 5 per-pass totals</strong>; the bracketed range is the observed min–max across passes (also the
     error bars on each company's <code>dashboard_uncertainty.png</code>). Every company additionally carries an
